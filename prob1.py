@@ -54,7 +54,7 @@ def main(args):
     # Only animate when the flag is set, and not running in headless mode.
     alg = AntClustering(grid, animate=(args.animate and not args.headless))
     clustering = alg.cluster(
-        iters=args.iterations, ants=args.ants, neighborhood_size=args.radius, k1=args.k1, k2=args.k2
+        iters=args.iterations, ants=args.ants, radius=args.radius, k1=args.k1, k2=args.k2
     )
 
     if not args.headless:

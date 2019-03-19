@@ -12,11 +12,11 @@ class AntClustering:
         self.grid = grid.copy()
         self.animate = animate
 
-    def perceived_fraction(self, cell, neighborhood):
+    def perceived_fraction(self, cell, radius):
         """Determine the perceived fraction of objects around the given cell.
 
         :param cell: An (x, y) tuple of coordinates of the cell to consider.
-        :param neighborhood: The size of the square neighborhood around the cell.
+        :param radius: The size of the square neighborhood around the cell.
         """
         raise NotImplementedError
 
@@ -38,7 +38,7 @@ class AntClustering:
         """
         raise NotImplementedError
 
-    def cluster(self, iters, ants, neighborhood_size, k1, k2):
+    def cluster(self, iters, ants, radius, k1, k2):
         """Cluster the grid with the given tunable parameters.
 
         Provide the tunable parameters here, so different tunable parameters can
@@ -46,8 +46,8 @@ class AntClustering:
 
         :param iters: The number of iterations to the the ACA for.
         :param ants: The number of ants to use.
-        :param neighborhood: The size of the square neighborhood around the cell.
-        :type neighborhood: int
+        :param radius: The radius each ant can perceive.
+        :type radius: int
         :param k1: The tunable parameter for the pickup probability.
         :param k2: The tunable parameter for the dropoff probability.
         :returns: The clustered grid.
