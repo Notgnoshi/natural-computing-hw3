@@ -10,7 +10,7 @@ ANTS = 500
 
 
 def main():
-    grid = init_grid(GRID_SIZE, REDS, BLUES)
+    grid = init_grid(GRID_SIZE, colors=(REDS, BLUES))
     plot_grid(grid, blocking=True)
 
     alg = AntClustering(grid)
