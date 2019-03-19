@@ -1,14 +1,16 @@
 class AntClustering:
     """Implements the Ant Clustering Algorithm."""
 
-    def __init__(self, grid):
+    def __init__(self, grid, animate=False):
         """Initialize the algorithm to cluster the given grid.
 
         :param grid: The grid to cluster.
         :type grid: A 2D array of integers.
+        :param animated: Whether or not to animate each run of the algorithm.
         """
         # Perform a copy so that we can modify the given grid willy-nilly.
         self.grid = grid.copy()
+        self.animate = animate
 
     def perceived_fraction(self, cell, neighborhood):
         """Determine the perceived fraction of objects around the given cell.
