@@ -92,8 +92,8 @@
         \begin{minipage}{\textwidth-4pt}#2\end{minipage}}}
 
 % Draw clouds around things. Useful in mathematical proofs.
-\newcommand{\cloud}[4][\dots]{
-    \raisebox{-0.4\height}{
+\newcommand{\cloud}[4][\dots]{%
+    \raisebox{-0.4\height}{%
         \begin{tikzpicture}
             \node [cloud,
                 draw,
