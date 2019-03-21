@@ -1,12 +1,12 @@
+import matplotlib.pyplot as plt
 import numpy as np
-
-from natural.abc import ABCMeta, abstractattribute, abstractmethod
+from matplotlib.colors import ListedColormap
 
 from .old.constants import X_COORD, Y_COORD
 
 
-class Grid(metaclass=ABCMeta):
-    """Abstract base class for a Grid object.
+class Grid:
+    """A representation of the Grid object the clustering algorithm works on.
 
     The Grid stores colored objects in cells indexed via (x, y) coordinates. The
     objects' colors are stored as a positive integer, with 0 representing an
@@ -14,39 +14,60 @@ class Grid(metaclass=ABCMeta):
 
     The Grid also maintains a list of Ants which can pick up objects in the cells
     and move them to another cell.
+
+    Grid implements a Grid.update() function, which runs one iteration of the ACA
+    algorithm and yields the wrapped numpy grid object. It is important that this
+    object not be modified between iterations, as it is a reference (to avoid
+    copies with every iteration) to the wrapped grid object.
     """
 
-    @abstractattribute
-    def grid_size(self):
-        """The (width, height) tuple describing the grid dimensions."""
+    def __init__(self, grid_size, colors, num_ants, radius, k1, k2):
+        """Initialize a random Grid and set up for proceding with the ACA algorithm.
 
-    @abstractattribute
-    def num_ants(self):
-        """The number of ants stored in the Grid."""
-
-    @abstractattribute
-    def radius(self):
-        """The distance each ant can see."""
-
-    @abstractattribute
-    def k1(self):
-        """The tunable parameter for the object pickup."""
-
-    @abstractattribute
-    def k2(self):
-        """The tunable parameter for the object dropoff."""
-
-    @abstractattribute
-    def colors(self):
-        """The list containing the number of each color to use.
-
-        E.g. The list [20, 50] means to use two colors, with 20 objects of the
-        first color, and 50 objects of the second color.
+        :param grid_size: A (width, height) tuple specifying the grid size.
+        :type grid_size: [type]
+        :param colors: A list containing the number of objects of each color to
+        initialize the grid with. E.g., using [10, 20] will initialize 10 objects
+        of the first color, and 20 of the second.
+        :param num_ants: The number of ants to use.
+        :param radius: Each ant's sight distance.
+        :param k1: A tunable parameter for the pickup probability.
+        :param k2: A tunable parameter for the dropoff probability.
         """
+        self.width, self.height = grid_size
+        self.num_ants = num_ants
+        self.radius = radius
+        self.k1 = k1
+        self.k2 = k2
+        self.colors = colors
+        self.grid = self.init_grid()
+        self.ants = self.init_ants()
 
-    @abstractattribute
-    def ants(self):
-        """The array of ants on the grid."""
+    def init_grid(self):
+        """Get a randomly initialized grid of objects.
+
+        The grid is a 2D array of integers, where
+        0 - unoccupied by an object
+        1 - occupied by a red object
+        2 - occupied by a blue object
+        3 - occupied by the next color in the list
+        ...
+        """
+        num_objects = sum(self.colors)
+        assert (
+            num_objects <= self.width * self.height
+        ), "Too many colored objects to fit in the grid."
+        # Use 1D arrays because that's all I can generate random indices for.
+        object_grid = np.zeros(self.height * self.width, dtype=int)
+        random_indices = np.random.choice(self.height * self.width, num_objects, replace=False)
+
+        start = 0
+        # 0 represents unoccupied, so start color indexing at 1.
+        for color, num_color in enumerate(self.colors, start=1):
+            object_grid[random_indices[start : start + num_color]] = color
+            start += num_color
+
+        return object_grid.reshape((self.width, self.height))
 
     def init_ants(self):
         """Get a randomly initialized array of ants.
@@ -64,24 +85,42 @@ class Grid(metaclass=ABCMeta):
             ant[Y_COORD] = index // width
         return ants
 
-    @abstractmethod
     def getkernel(self, x, y):
-        """Get the kernel centered at the given coordinates."""
+        """Get the kernel centered at the given coordinates.
 
-    @abstractmethod
-    def update(self):
-        """Perform one iteration of the ACA.
-
-        TODO: Our original thought was to yield the grid with every iteration.
-        However, we have abstracted away the wrapped grid object so that it could
-        be a matrix *or* a hash table. Thus we cannot yield the grid with each
-        iteration.
+        It is important to note that this kernel is a view of the wrapped numpy
+        array, so modifying the kernel will modify the wrapped array. This is
+        intentional so each ant can operate on the grid in as simple a manner as
+        possible.
         """
+        raise NotImplementedError
 
-    @abstractmethod
+    def update(self):
+        """Perform one iteration of the ACA, yielding the grid at each iteration."""
+        raise NotImplementedError
+
     def plot(self, blocking=False):
         """Plot the grid.
 
         :param blocking: If blocking is True, display the plot GUI, and wait for
         the user to exit. Otherwise, update the existing plot without waiting.
         """
+        colors = ["white", "red", "blue", "green", "orange", "purple", "brown", "pink"]
+        cmap = ListedColormap(colors)
+
+        # Start a new figure each iteration, because in live plotting mode, it takes
+        # exponentially longer for each frame because it's adding a new image to an
+        # existing figure. I think.
+        plt.clf()
+        # Don't be an idiot. Set the largest value to the most amount of colors supported.
+        # If more colors are provided, then fail silently (shame on me).
+        plt.imshow(self.grid, cmap=cmap, vmin=0, vmax=len(colors) - 1)
+        plt.title("")
+        plt.axis("off")
+
+        if blocking:
+            plt.show()
+        else:
+            # TODO: Figure out how to implement nonblocking plotting from not a
+            # Jupyter notebook.
+            raise NotImplementedError
