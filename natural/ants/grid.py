@@ -1,63 +1,55 @@
-from abc import ABCMeta, abstractmethod
+from natural.abc import ABCMeta, abstractattribute, abstractmethod
 
 
 class Grid(metaclass=ABCMeta):
-    @property
-    @abstractmethod
+    @abstractattribute
     def grid_size(self):
-        ...
+        pass
 
-    @property
-    @abstractmethod
+    @abstractattribute
     def num_ants(self):
-        ...
+        pass
 
-    @property
-    @abstractmethod
+    @abstractattribute
     def radius(self):
-        ...
+        pass
 
-    @property
-    @abstractmethod
+    @abstractattribute
     def k1(self):
-        ...
+        pass
 
-    @property
-    @abstractmethod
+    @abstractattribute
     def k2(self):
-        ...
+        pass
 
-    @property
-    @abstractmethod
+    @abstractattribute
     def colors(self):
-        ...
+        pass
 
-    @property
     @abstractmethod
     def grid(self):
-        ...
+        pass
 
-    @property
-    @abstractmethod
+    @abstractattribute
     def ants(self):
-        ...
+        pass
 
     @abstractmethod
     def init_grid(self):
-        ...
+        pass
 
     @abstractmethod
     def init_ants(self):
-        ...
+        pass
 
     @abstractmethod
     def getkernel(self, x, y):
-        ...
+        pass
 
     @abstractmethod
     def update(self):
-        ...
+        pass
 
     @abstractmethod
     def plot(self, blocking=False):
-        ...
+        pass
