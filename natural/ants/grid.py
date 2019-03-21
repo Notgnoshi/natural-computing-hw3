@@ -26,9 +26,6 @@ class Grid(metaclass=ABCMeta):
     def colors(self):
         pass
 
-    @abstractmethod
-    def grid(self):
-        pass
 
     @abstractattribute
     def ants(self):
