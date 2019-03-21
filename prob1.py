@@ -26,6 +26,13 @@ def parse_args():
     parser.add_argument("-k1", type=float, default=0.1, help="The k1 tunable parameter")
     parser.add_argument("-k2", type=float, default=0.1, help="The k2 tunable parameter")
     parser.add_argument(
+        "--grid-type",
+        type=str,
+        choices=["matrix", "hash"],
+        default="matrix",
+        help="The grid data structure to use.",
+    )
+    parser.add_argument(
         "--animate",
         "-a",
         action="store_true",
