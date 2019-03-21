@@ -89,6 +89,11 @@ class ACA:
             ant[Y_COORD] = index // width
         return ants
 
+    @staticmethod
+    def __kernel(matrix, x1, y1, x2, y2):
+        """Get the kernel from (x1, y1) to (x2, y2) from the given matrix."""
+        raise NotImplementedError
+
     def getkernel(self, x, y):
         """Get the kernel centered at the given coordinates.
 
