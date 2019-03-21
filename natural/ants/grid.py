@@ -1,8 +1,7 @@
 from abc import ABCMeta, abstractmethod
 
-class Grid:
-    __metaclass__ = ABCMeta
 
+class Grid(metaclass=ABCMeta):
     @property
     @abstractmethod
     def grid_size(self):

@@ -1,4 +1,5 @@
-from grid import Grid
+from .grid import Grid
+
 
 class MatrixGrid(Grid):
     grid_size = None

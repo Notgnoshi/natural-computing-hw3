@@ -1,4 +1,5 @@
-from constants import *
+from .old.constants import UNLOADED
+
 
 class Ant:
     def __init__(self, x, y, k1, k2):

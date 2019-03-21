@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import argparse
 
-from natural.ants import AntClustering, init_grid, plot_grid
+from natural.ants.old import AntClustering, init_grid, plot_grid
 
 # The default values given by the homework assignment.
 GRID_SIZE = (200, 200)  # (width, height)

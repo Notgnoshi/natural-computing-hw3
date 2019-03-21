@@ -1,4 +1,5 @@
-from grid import Grid
+from .grid import Grid
+
 
 class HashGrid(Grid):
     grid_size = None
