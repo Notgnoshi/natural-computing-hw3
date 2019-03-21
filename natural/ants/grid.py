@@ -25,7 +25,6 @@ class Grid:
         """Initialize a random Grid and set up for proceding with the ACA algorithm.
 
         :param grid_size: A (width, height) tuple specifying the grid size.
-        :type grid_size: [type]
         :param colors: A list containing the number of objects of each color to
         initialize the grid with. E.g., using [10, 20] will initialize 10 objects
         of the first color, and 20 of the second.
