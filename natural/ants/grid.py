@@ -1,4 +1,8 @@
+import numpy as np
+
 from natural.abc import ABCMeta, abstractattribute, abstractmethod
+
+from .old.constants import X_COORD, Y_COORD
 
 
 class Grid(metaclass=ABCMeta):
@@ -44,9 +48,21 @@ class Grid(metaclass=ABCMeta):
     def ants(self):
         """The array of ants on the grid."""
 
-    @abstractmethod
     def init_ants(self):
-        """Initialize the Ant array."""
+        """Get a randomly initialized array of ants.
+
+        Each ant is a (x, y, load) tuple, where the load is an integer representing
+        the color of the object the ant is carrying. 0 represents an unloaded ant,
+        and 1, 2, 3, ... represent different colors of objects.
+        """
+        width, height = self.grid_size
+        ants = np.zeros((self.num_ants, 3), dtype=int)
+        # This is an array of indices into the grid as if it were 1D.
+        ant_indices = np.random.choice(height * width, self.num_ants, replace=False)
+        for ant, index in zip(ants, ant_indices):
+            ant[X_COORD] = index % width
+            ant[Y_COORD] = index // width
+        return ants
 
     @abstractmethod
     def getkernel(self, x, y):

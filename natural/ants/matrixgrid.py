@@ -15,9 +15,6 @@ class MatrixGrid(Grid):
     def init_grid(self):
         raise NotImplementedError
 
-    def init_ants(self):
-        raise NotImplementedError
-
     def getkernel(self, x, y):
         raise NotImplementedError
 
