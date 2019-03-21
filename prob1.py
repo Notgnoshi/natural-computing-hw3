@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import argparse
 
-from natural.ants.old import AntClustering, init_grid, plot_grid
+from natural.ants import ACA
 
 # The default values given by the homework assignment.
 GRID_SIZE = (200, 200)  # (width, height)
@@ -26,13 +26,6 @@ def parse_args():
     parser.add_argument("-k1", type=float, default=0.1, help="The k1 tunable parameter")
     parser.add_argument("-k2", type=float, default=0.1, help="The k2 tunable parameter")
     parser.add_argument(
-        "--grid-type",
-        type=str,
-        choices=["matrix", "hash"],
-        default="matrix",
-        help="The grid data structure to use.",
-    )
-    parser.add_argument(
         "--animate",
         "-a",
         action="store_true",
@@ -56,17 +49,14 @@ def parse_args():
 
 def main(args):
     print(args)
-    grid = init_grid((args.width, args.height), colors=args.colors)
 
+    alg = ACA((args.width, args.height), args.colors, args.ants, args.radius, args.k1, args.k2)
     # Only animate when the flag is set, and not running in headless mode.
-    alg = AntClustering(grid, animate=(args.animate and not args.headless))
-    clustering = alg.cluster(
-        iters=args.iterations, ants=args.ants, radius=args.radius, k1=args.k1, k2=args.k2
-    )
+    alg.run(args.iterations, animate=args.animate and not args.headless)
 
     if not args.headless:
         # TODO: Plot the initial and end grid on the same window.
-        plot_grid(clustering, blocking=True)
+        alg.plot(blocking=True)
 
 
 if __name__ == "__main__":
