@@ -45,10 +45,6 @@ class Grid(metaclass=ABCMeta):
         """The array of ants on the grid."""
 
     @abstractmethod
-    def init_grid(self):
-        """Initialize the wrapped internal grid object."""
-
-    @abstractmethod
     def init_ants(self):
         """Initialize the Ant array."""
 
