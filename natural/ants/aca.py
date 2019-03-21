@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.colors import ListedColormap
 
-from .old.constants import X_COORD, Y_COORD
+from .constants import X_COORD, Y_COORD
 
 
 class ACA:

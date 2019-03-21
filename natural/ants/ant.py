@@ -1,4 +1,4 @@
-from .old.constants import UNLOADED
+from .constants import UNLOADED
 
 
 class Ant:
