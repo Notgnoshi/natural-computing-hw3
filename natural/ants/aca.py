@@ -92,7 +92,19 @@ class ACA:
     @staticmethod
     def __kernel(matrix, x1, y1, x2, y2):
         """Get the kernel from (x1, y1) to (x2, y2) from the given matrix."""
-        raise NotImplementedError
+        width, height = matrix.shape
+        x1 = max(0, min(x1, width))
+        x2 = max(0, min(x2, width))
+        y1 = max(0, min(y1, height))
+        y2 = max(0, min(y2, height))
+        return matrix[x1 : x2 + 1, y1 : y2 + 1]
+
+    @staticmethod
+    def __kernel_center(matrix, x, y, r):
+        """Get the kernel centered at (x, y) with radius `r` from the given matrix."""
+        x1, x2 = x - r, x + r
+        y1, y2 = y - r, y + r
+        return ACA.__kernel(matrix, x1, y1, x2, y2)
 
     def getkernel(self, x, y):
         """Get the kernel centered at the given coordinates.
@@ -102,7 +114,7 @@ class ACA:
         intentional so each ant can operate on the grid in as simple a manner as
         possible.
         """
-        raise NotImplementedError
+        return self.__kernel_center(self.grid, x, y, self.radius)
 
     def update(self):
         """Perform one iteration of the ACA, yielding the grid at each iteration."""

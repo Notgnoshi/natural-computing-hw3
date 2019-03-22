@@ -6,6 +6,7 @@ import natural.ants
 
 # Name mangling == private members. Didn't you know?
 kernel = natural.ants.ACA._ACA__kernel
+kernel_center = natural.ants.ACA._ACA__kernel_center
 
 
 class KernelTest(unittest.TestCase):
@@ -31,7 +32,7 @@ class KernelTest(unittest.TestCase):
         k = kernel(m, x1=0, y1=0, x2=0, y2=0)
         self.assertEqual(k.shape, (1, 1))
         self.assertEqual(k[0, 0], m[0, 0])
-        self.assertEqual(k[-1, -1], m[-1, -1])
+        self.assertEqual(k[-1, -1], m[0, 0])
 
     def test_contained(self):
         m = np.arange(25).reshape((5, 5))
@@ -87,3 +88,42 @@ class KernelTest(unittest.TestCase):
         self.assertEqual(k.shape, (2, 2))
         self.assertEqual(k[0, 0], m[3, 3])
         self.assertEqual(k[-1, -1], m[4, 4])
+
+class KernelCenterTest(unittest.TestCase):
+    def test_contained(self):
+        m = np.arange(25).reshape((5, 5))
+        k = kernel_center(m, x=2, y=2, r=1)
+
+        self.assertEqual(k.shape, (3, 3))
+        self.assertEqual(k[0, 0], m[1, 1])
+        self.assertEqual(k[-1, -1], m[3, 3])
+
+    def test_contains(self):
+        m = np.arange(25).reshape((5, 5))
+        k = kernel_center(m, x=2, y=2, r=3)
+        self.assertEqual(k.shape, m.shape)
+        self.assertTrue(np.all(k == m))
+
+        k = kernel_center(m, x=2, y=2, r=4)
+        self.assertEqual(k.shape, m.shape)
+        self.assertTrue(np.all(k == m))
+
+    def test_left(self):
+        m = np.arange(25).reshape((5, 5))
+        k = kernel_center(m, x=0, y=0, r=1)
+        self.assertEqual(k.shape, (2, 2))
+        self.assertEqual(k[0, 0], m[0, 0])
+        self.assertEqual(k[-1, -1], m[1, 1])
+
+    def test_right(self):
+        m = np.arange(25).reshape((5, 5))
+        k = kernel_center(m, x=4, y=4, r=1)
+        self.assertEqual(k.shape, (2, 2))
+        self.assertEqual(k[0, 0], m[3, 3])
+        self.assertEqual(k[-1, -1], m[4, 4])
+
+    def test_smallest(self):
+        m = np.arange(25).reshape((5, 5))
+        k = kernel_center(m, x=2, y=2, r=0)
+        self.assertEqual(k.shape, (1, 1))
+        self.assertEqual(k[0, 0], m[2, 2])
