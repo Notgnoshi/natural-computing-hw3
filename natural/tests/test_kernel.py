@@ -7,6 +7,7 @@ import natural.ants
 # Name mangling == private members. Didn't you know?
 kernel = natural.ants.ACA._ACA__kernel
 kernel_center = natural.ants.ACA._ACA__kernel_center
+kernel_coords = natural.ants.ACA._ACA__kernel_coords
 
 
 class KernelTest(unittest.TestCase):
@@ -120,3 +121,27 @@ class KernelCenterTest(unittest.TestCase):
         k = kernel_center(self.m, x=2, y=2, r=0)
         self.assertEqual(k.shape, (1, 1))
         self.assertEqual(k[0, 0], self.m[2, 2])
+
+class CoordClippingTest(unittest.TestCase):
+    def test_corners(self):
+        self.assertEqual(kernel_coords(coords=(0, 0), radius=1), (0, 0))
+        self.assertEqual(kernel_coords(coords=(4, 0), radius=1), (1, 0))
+        self.assertEqual(kernel_coords(coords=(4, 4), radius=1), (1, 1))
+        self.assertEqual(kernel_coords(coords=(0, 4), radius=1), (0, 1))
+
+        self.assertEqual(kernel_coords(coords=(0, 0), radius=2), (0, 0))
+        self.assertEqual(kernel_coords(coords=(4, 0), radius=2), (2, 0))
+        self.assertEqual(kernel_coords(coords=(4, 4), radius=2), (2, 2))
+        self.assertEqual(kernel_coords(coords=(0, 4), radius=2), (0, 2))
+
+    def test_contains(self):
+        self.assertEqual(kernel_coords(coords=(1, 1), radius=1), (1, 1))
+        self.assertEqual(kernel_coords(coords=(3, 3), radius=1), (1, 1))
+        self.assertEqual(kernel_coords(coords=(2, 2), radius=2), (2, 2))
+        self.assertEqual(kernel_coords(coords=(3, 3), radius=2), (2, 2))
+
+    def test_sides(self):
+        self.assertEqual(kernel_coords(coords=(0, 1), radius=1), (0, 1))
+        self.assertEqual(kernel_coords(coords=(5, 1), radius=2), (2, 1))
+        self.assertEqual(kernel_coords(coords=(1, 5), radius=1), (1, 1))
+        self.assertEqual(kernel_coords(coords=(3, 0), radius=1), (1, 0))
