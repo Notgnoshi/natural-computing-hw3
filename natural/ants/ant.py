@@ -96,8 +96,8 @@ class Ant:
         """
         max_x, max_y = kernel.shape
         # Use the size of the kernel to make sure the ant doesn't run off the edge
-        new_x = min(max(k_x + np.random.randint(-1, 1 + 1), 0), max_x)
-        new_y = min(max(k_y + np.random.randint(-1, 1 + 1), 0), max_y)
+        new_x = min(max(k_x + np.random.randint(-1, 1 + 1), 0), max_x - 1)
+        new_y = min(max(k_y + np.random.randint(-1, 1 + 1), 0), max_y - 1)
         self.x = self.x - (k_x - new_x)
         self.y = self.y - (k_y - new_y)
 
