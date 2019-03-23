@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.colors import ListedColormap
 
-from .constants import X_COORD, Y_COORD
+from .ant import Ant
 
 
 class ACA:
@@ -81,13 +81,9 @@ class ACA:
         and 1, 2, 3, ... represent different colors of objects.
         """
         width, height = self.grid_size
-        ants = np.zeros((self.num_ants, 3), dtype=int)
         # This is an array of indices into the grid as if it were 1D.
-        ant_indices = np.random.choice(height * width, self.num_ants, replace=False)
-        for ant, index in zip(ants, ant_indices):
-            ant[X_COORD] = index % width
-            ant[Y_COORD] = index // width
-        return ants
+        indices = np.random.choice(height * width, self.num_ants, replace=False)
+        return [Ant(i % width, i // width, self.k1, self.k2) for i in indices]
 
     @staticmethod
     def __kernel(matrix, x1, y1, x2, y2):
