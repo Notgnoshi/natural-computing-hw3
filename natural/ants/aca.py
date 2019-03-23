@@ -132,8 +132,10 @@ class ACA:
         return self.__kernel_center(self.grid, x, y, self.radius)
 
     def update(self):
-        """Perform one iteration of the ACA, yielding the grid at each iteration."""
-        raise NotImplementedError
+        """Perform one iteration of the ACA."""
+        for ant in self.ants:
+            kernel = self.getkernel(ant.x, ant.y)
+            ant.update(kernel, *self.__kernel_coords((ant.x, ant.y), self.radius))
 
     def run(self, iters, animate=False):
         """Run the specified number of iterations of the ACA.
@@ -142,7 +144,11 @@ class ACA:
         :param animate: Whether or not to plot the progress of the ACA, defaults to False
         :returns: The grid after the final iteration.
         """
-        raise NotImplementedError
+        for i in range(iters):
+            self.update()
+
+            if animate and i % 100 == 0:
+                self.plot(blocking=False)
 
     def plot(self, blocking=False):
         """Plot the grid.
