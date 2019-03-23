@@ -80,10 +80,9 @@ class ACA:
         the color of the object the ant is carrying. 0 represents an unloaded ant,
         and 1, 2, 3, ... represent different colors of objects.
         """
-        width, height = self.grid_size
         # This is an array of indices into the grid as if it were 1D.
-        indices = np.random.choice(height * width, self.num_ants, replace=False)
-        return [Ant(i % width, i // width, self.k1, self.k2) for i in indices]
+        indices = np.random.choice(self.height * self.width, self.num_ants, replace=False)
+        return [Ant(i % self.width, i // self.width, self.k1, self.k2) for i in indices]
 
     @staticmethod
     def __kernel(matrix, x1, y1, x2, y2):
