@@ -6,6 +6,8 @@ from .constants import EMPTY
 class Ant:
     """An ant entity that moves around and picks up and puts down objects."""
 
+    __slots__ = "x", "y", "k1", "k2", "load"
+
     def __init__(self, x, y, k1, k2):
         """Initialize an Ant with its location and tunable parameters.
 
