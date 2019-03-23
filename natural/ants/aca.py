@@ -149,6 +149,9 @@ class ACA:
             if animate and i % 100 == 0:
                 self.plot(blocking=False)
 
+        # TODO: At the end of the iterations, it's possible (even likely) that the ants are still
+        # holding items. Make sure to unload the ants.
+
     def plot(self, blocking=False):
         """Plot the grid.
 
