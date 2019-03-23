@@ -158,6 +158,9 @@ class ACA:
         colors = ["white", "red", "blue", "green", "orange", "purple", "brown", "pink"]
         cmap = ListedColormap(colors)
 
+        if not blocking:
+            plt.ion()
+
         # Start a new figure each iteration, because in live plotting mode, it takes
         # exponentially longer for each frame because it's adding a new image to an
         # existing figure. I think.
@@ -169,8 +172,7 @@ class ACA:
         plt.axis("off")
 
         if blocking:
+            plt.ioff()
             plt.show()
         else:
-            # TODO: Figure out how to implement nonblocking plotting from not a
-            # Jupyter notebook.
-            raise NotImplementedError
+            plt.pause(0.00000001)
