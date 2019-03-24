@@ -5,9 +5,9 @@ import numpy as np
 import natural.ants
 
 # Name mangling == private members. Didn't you know?
-kernel = natural.ants.ACA._ACA__kernel
-kernel_center = natural.ants.ACA._ACA__kernel_center
-kernel_coords = natural.ants.ACA._ACA__kernel_coords
+kernel = natural.ants.aca.__kernel
+kernel_center = natural.ants.aca.kernel_center
+kernel_coords = natural.ants.aca.kernel_coords
 
 
 class KernelTest(unittest.TestCase):

@@ -1,12 +1,20 @@
+import numba
 import numpy as np
 
 from .constants import EMPTY
 
+spec = [
+    ("x", numba.int32),
+    ("y", numba.int32),
+    ("k1", numba.float32),
+    ("k2", numba.float32),
+    ("loaded", numba.boolean),
+]
 
+
+@numba.jitclass(spec)
 class Ant:
     """An ant entity that moves around and picks up and puts down objects."""
-
-    __slots__ = "x", "y", "k1", "k2", "loaded"
 
     def __init__(self, x, y, k1, k2):
         """Initialize an Ant with its location and tunable parameters.
@@ -100,14 +108,13 @@ class Ant:
         self.x = self.x - (k_x - new_x)
         self.y = self.y - (k_y - new_y)
 
-    @staticmethod
-    def perceived_fraction(kernel, color):
+    def perceived_fraction(self, kernel, color):
         """Determine the perceived fraction of objects of a given color around the given kernel.
 
         :param kernel: A sub matrix of the grid that will be considered.
         :param color: The color of the elements that will be considered.
         """
-        return np.count_nonzero(kernel == color) / kernel.size
+        return np.sum(kernel == color) / kernel.size
 
     def pickup_probability(self, f):
         """Determine the probability of an ant picking up the object in the given cell.

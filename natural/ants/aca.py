@@ -1,8 +1,49 @@
 import matplotlib.pyplot as plt
+import numba
 import numpy as np
 from matplotlib.colors import ListedColormap
 
 from .ant import Ant
+
+
+@numba.jit(nopython=True)
+def __kernel(matrix, x1, y1, x2, y2):
+    """Get the kernel from (x1, y1) to (x2, y2) from the given matrix."""
+    # Only get the first two dimensions of the matrix if more exist.
+    width, height = matrix.shape[:2]
+    x1 = max(0, min(x1, width))
+    x2 = max(0, min(x2, width))
+    y1 = max(0, min(y1, height))
+    y2 = max(0, min(y2, height))
+    return matrix[x1 : x2 + 1, y1 : y2 + 1]
+
+
+@numba.jit(nopython=True)
+def kernel_center(matrix, x, y, r):
+    """Get the kernel centered at (x, y) with radius `r` from the given matrix."""
+    x1, x2 = x - r, x + r
+    y1, y2 = y - r, y + r
+    return __kernel(matrix, x1, y1, x2, y2)
+
+
+@numba.jit(nopython=True)
+def kernel_coords(coords, radius):
+    """Given a set of matrix coordinates and a kernel radius, get the local kernel coordinates.
+
+    In most cases the kernel coordinates will be (r, r) -- the center of the kernel. That is,
+    unless the kernel overlaps the edge of the matrix. In this edge case (it's a pun, get it?)
+    the local coordinates shift by however much the kernel goes off the edge of the matrix.
+
+    For our use cases, the given coordinates will always be contained inside the matrix, so
+    the bottom and right most coordinates will remain unchanged. The relative coordinates will
+    only change if the kernel overlaps the top or left boundary, because the coordinates are
+    relative to the upper left corner of the kernel.
+
+    :param coords: The absolute matrix (x, y) coordinates.
+    :param r: The kernel square radius.
+    """
+    x, y = coords
+    return min(radius, x), min(radius, y)
 
 
 class ACA:
@@ -101,58 +142,11 @@ class ACA:
 
         self.ants = ants
 
-    @staticmethod
-    def __kernel(matrix, x1, y1, x2, y2):
-        """Get the kernel from (x1, y1) to (x2, y2) from the given matrix."""
-        # Only get the first two dimensions of the matrix if more exist.
-        width, height = matrix.shape[:2]
-        x1 = max(0, min(x1, width))
-        x2 = max(0, min(x2, width))
-        y1 = max(0, min(y1, height))
-        y2 = max(0, min(y2, height))
-        return matrix[x1 : x2 + 1, y1 : y2 + 1]
-
-    @staticmethod
-    def __kernel_center(matrix, x, y, r):
-        """Get the kernel centered at (x, y) with radius `r` from the given matrix."""
-        x1, x2 = x - r, x + r
-        y1, y2 = y - r, y + r
-        return ACA.__kernel(matrix, x1, y1, x2, y2)
-
-    @staticmethod
-    def __kernel_coords(coords, radius):
-        """Given a set of matrix coordinates and a kernel radius, get the local kernel coordinates.
-
-        In most cases the kernel coordinates will be (r, r) -- the center of the kernel. That is,
-        unless the kernel overlaps the edge of the matrix. In this edge case (it's a pun, get it?)
-        the local coordinates shift by however much the kernel goes off the edge of the matrix.
-
-        For our use cases, the given coordinates will always be contained inside the matrix, so
-        the bottom and right most coordinates will remain unchanged. The relative coordinates will
-        only change if the kernel overlaps the top or left boundary, because the coordinates are
-        relative to the upper left corner of the kernel.
-
-        :param coords: The absolute matrix (x, y) coordinates.
-        :param r: The kernel square radius.
-        """
-        x, y = coords
-        return min(radius, x), min(radius, y)
-
-    def getkernel(self, x, y):
-        """Get the kernel centered at the given coordinates.
-
-        It is important to note that this kernel is a view of the wrapped numpy
-        array, so modifying the kernel will modify the wrapped array. This is
-        intentional so each ant can operate on the grid in as simple a manner as
-        possible.
-        """
-        return self.__kernel_center(self.grid, x, y, self.radius)
-
     def update(self):
         """Perform one iteration of the ACA."""
         for ant in self.ants:
-            kernel = self.getkernel(ant.x, ant.y)
-            ant.update(kernel, *self.__kernel_coords((ant.x, ant.y), self.radius))
+            kernel = kernel_center(self.grid, ant.x, ant.y, self.radius)
+            ant.update(kernel, *kernel_coords((ant.x, ant.y), self.radius))
 
     def run(self, iters, animate=False):
         """Run the specified number of iterations of the ACA.
