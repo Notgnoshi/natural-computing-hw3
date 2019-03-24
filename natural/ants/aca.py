@@ -167,11 +167,6 @@ class ACA:
             if animate and i % 50 == 0:
                 self.plot(blocking=False)
 
-        # Unload all ants that have a load.
-        for ant in self.ants:
-            kernel = self.getkernel(ant.x, ant.y)
-            ant.dropoff(kernel, *self.__kernel_coords((ant.x, ant.y), self.radius))
-
     def plot(self, blocking=False):
         """Plot the grid.
 

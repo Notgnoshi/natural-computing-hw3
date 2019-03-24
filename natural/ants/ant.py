@@ -39,14 +39,6 @@ class Ant:
         self.update_load(kernel, k_x, k_y)
         self.update_location(kernel, k_x, k_y)
 
-    def pickup(self, kernel, k_x, k_y):
-        """Pick up the object from the given kernel."""
-        self.loaded = True
-
-    def dropoff(self, kernel, k_x, k_y):
-        """Unloads the Ant's load into the given kernel."""
-        self.loaded = False
-
     def update_load(self, kernel, k_x, k_y):
         """Randomly pick up or drop off an object.
 
@@ -72,14 +64,14 @@ class Ant:
             f = self.perceived_fraction(kernel[:, :, 0], color)
             # Dermine if ant should pick up value
             if np.random.random() <= self.pickup_probability(f):
-                self.pickup(kernel, k_x, k_y)
+                self.loaded = True
         # Drop off
         elif self.loaded and not cell_occupied:
             # Calculate p based on value ant is carryin
             f = self.perceived_fraction(kernel[:, :, 0], color)
             # Determine if ant should drop value
             if np.random.random() <= self.dropoff_probability(f):
-                self.dropoff(kernel, k_x, k_y)
+                self.loaded = False
 
     def update_location(self, kernel, k_x, k_y):
         """Randomly take a step in one of the neighboring cells.
