@@ -146,7 +146,7 @@ class ACA:
         for i in range(iters):
             self.update()
 
-            if animate and i % 100 == 0:
+            if animate and i % 50 == 0:
                 self.plot(blocking=False)
 
         # TODO: At the end of the iterations, it's possible (even likely) that the ants are still
