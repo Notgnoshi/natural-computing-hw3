@@ -44,34 +44,42 @@ class ACA:
         self.k1 = k1
         self.k2 = k2
         self.colors = colors
-        self.grid = self.init_grid()
-        self.ants = self.init_ants()
+        self.grid = None
+        self.init_grid()
+        self.ants = None
+        self.init_ants()
 
     def init_grid(self):
         """Get a randomly initialized grid of objects.
 
-        The grid is a 2D array of integers, where
+        The grid is a 2D array of (color, ant) tuples, where color is
         0 - unoccupied by an object
         1 - occupied by a red object
         2 - occupied by a blue object
-        3 - occupied by the next color in the list
-        ...
+        and so on.
+
+        The ant value is either 0 or 1 to indicate the presence of an ant in the
+        cell. The corresponding Ant object in the self.ants list is responsible
+        for indicating whether or not the Ant is carrying the colored item or not.
+
+        The Ant object is also responsible for managing the ant value when it
+        moves from cell to cell.
         """
         num_objects = sum(self.colors)
         assert (
             num_objects <= self.width * self.height
         ), "Too many colored objects to fit in the grid."
         # Use 1D arrays because that's all I can generate random indices for.
-        object_grid = np.zeros(self.height * self.width, dtype=int)
+        object_grid = np.zeros((self.height * self.width, 2), dtype=int)
         random_indices = np.random.choice(self.height * self.width, num_objects, replace=False)
 
         start = 0
         # 0 represents unoccupied, so start color indexing at 1.
         for color, num_color in enumerate(self.colors, start=1):
-            object_grid[random_indices[start : start + num_color]] = color
+            object_grid[random_indices[start : start + num_color], 0] = color
             start += num_color
 
-        return object_grid.reshape((self.width, self.height))
+        self.grid = object_grid.reshape((self.width, self.height, 2))
 
     def init_ants(self):
         """Get a randomly initialized array of ants.
@@ -80,14 +88,24 @@ class ACA:
         the color of the object the ant is carrying. 0 represents an unloaded ant,
         and 1, 2, 3, ... represent different colors of objects.
         """
+        assert self.num_ants <= self.width * self.height, "Too many ants to fit in the grid."
         # This is an array of indices into the grid as if it were 1D.
         indices = np.random.choice(self.height * self.width, self.num_ants, replace=False)
-        return [Ant(i % self.width, i // self.width, self.k1, self.k2) for i in indices]
+        ants = []
+        for i in indices:
+            x = i % self.width
+            y = i // self.width
+            ant = Ant(x, y, self.k1, self.k2)
+            ants.append(ant)
+            self.grid[x, y, 1] = 1
+
+        self.ants = ants
 
     @staticmethod
     def __kernel(matrix, x1, y1, x2, y2):
         """Get the kernel from (x1, y1) to (x2, y2) from the given matrix."""
-        width, height = matrix.shape
+        # Only get the first two dimensions of the matrix if more exist.
+        width, height = matrix.shape[:2]
         x1 = max(0, min(x1, width))
         x2 = max(0, min(x2, width))
         y1 = max(0, min(y1, height))
@@ -149,8 +167,10 @@ class ACA:
             if animate and i % 50 == 0:
                 self.plot(blocking=False)
 
-        # TODO: At the end of the iterations, it's possible (even likely) that the ants are still
-        # holding items. Make sure to unload the ants.
+        # Unload all ants that have a load.
+        for ant in self.ants:
+            kernel = self.getkernel(ant.x, ant.y)
+            ant.dropoff(kernel, *self.__kernel_coords((ant.x, ant.y), self.radius))
 
     def plot(self, blocking=False):
         """Plot the grid.
@@ -170,7 +190,7 @@ class ACA:
         plt.clf()
         # Don't be an idiot. Set the largest value to the most amount of colors supported.
         # If more colors are provided, then fail silently (shame on me).
-        plt.imshow(self.grid, cmap=cmap, vmin=0, vmax=len(colors) - 1)
+        plt.imshow(self.grid[:, :, 0], cmap=cmap, vmin=0, vmax=len(colors) - 1)
         plt.title("")
         plt.axis("off")
 

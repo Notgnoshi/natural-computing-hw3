@@ -39,6 +39,16 @@ class Ant:
         self.update_load(kernel, k_x, k_y)
         self.update_location(kernel, k_x, k_y)
 
+    def pickup(self, kernel, k_x, k_y):
+        """Pick up the object from the given kernel."""
+        self.load = kernel[k_x, k_y, 0]
+        kernel[k_x, k_y, 0] = EMPTY
+
+    def dropoff(self, kernel, k_x, k_y):
+        """Unloads the Ant's load into the given kernel."""
+        kernel[k_x, k_y, 0] = self.load
+        self.load = EMPTY
+
     def update_load(self, kernel, k_x, k_y):
         """Randomly pick up or drop off an object.
 
@@ -55,49 +65,44 @@ class Ant:
         :param k_x: The local x coordinate of the Ant in the kernel
         :param k_y: The local y coordinate of the Ant in the kernel
         """
-        cell_status = kernel[k_x, k_y]
-        cell_occupied = bool(cell_status)
+        color = kernel[k_x, k_y, 0]
+        cell_occupied = color != 0
 
         # Pick up
-        if self.load == EMPTY and cell_occupied:
+        if not self.load and cell_occupied:
             # Calculate p based on value in grid cell
-            f = self.perceived_fraction(kernel, cell_status)
+            f = self.perceived_fraction(kernel[:, :, 0], color)
             # Dermine if ant should pick up value
             if np.random.random() <= self.pickup_probability(f):
-                # Pick up value
-                self.load = cell_status
-                kernel[k_x, k_y] = EMPTY
+                # TODO: Removing the item from the grid makes it impossible to use the item in the
+                # perceived fraction calculation. However, if the ant leaves the item in the grid,
+                # the ant movement must be updated to not walk over an occupied cell when the ant is
+                # loaded.
+                self.pickup(kernel, k_x, k_y)
         # Drop off
-        elif self.load != EMPTY and not cell_occupied:
+        elif self.load and not cell_occupied:
             # Calculate p based on value ant is carryin
-            f = self.perceived_fraction(kernel, self.load)
+            f = self.perceived_fraction(kernel[:, :, 0], color)
             # Determine if ant should drop value
             if np.random.random() <= self.dropoff_probability(f):
-                # Drop value
-                kernel[k_x, k_y] = self.load
-                self.load = EMPTY
+                self.dropoff(kernel, k_x, k_y)
 
     def update_location(self, kernel, k_x, k_y):
         """Randomly take a step in one of the neighboring cells.
-
-        TODO: The algorithm states that two ants may not occupy the same cell. This is currently not
-        possible with our current implementation. The Ant's themselves store their coordinates, and
-        a particular Ant is not aware of any of the other Ants. This would take some effort to fix,
-        so maybe leave it as is?
-
-        NOTE: Ant's remove items from the grid when they update their load, so the fact that two
-        Ants may occupy the same grid will *not* result in item duplication or deletion.
-
-        NOTE: The ant may potentially not make a step.
 
         :param kernel: The Ant's visible neighborhood.
         :param k_x: The Ant's local x coordinate in the neighborhood.
         :param k_y: The Ant's local y coordinate in the neighborhood.
         """
-        max_x, max_y = kernel.shape
-        # Use the size of the kernel to make sure the ant doesn't run off the edge
-        new_x = min(max(k_x + np.random.randint(-1, 1 + 1), 0), max_x - 1)
-        new_y = min(max(k_y + np.random.randint(-1, 1 + 1), 0), max_y - 1)
+        # TODO: This randomly selects *any* cell in the entire neighborhood. Pick a random
+        # unoccupied cell only one cell away from (k_x, k_y).
+        ant_locations = kernel[:, :, 1]
+        # Find unoccupied indices.
+        x, y = np.where(ant_locations != 1)
+        # TODO: If the ant is loaded, do not walk over cells occupied by objects.
+        i = np.random.randint(len(x))
+        new_x, new_y = x[i], y[i]
+
         self.x = self.x - (k_x - new_x)
         self.y = self.y - (k_y - new_y)
 
