@@ -179,7 +179,7 @@ class ACA:
         plt.clf()
         # Don't be an idiot. Set the largest value to the most amount of colors supported.
         # If more colors are provided, then fail silently (shame on me).
-        plt.imshow(self.grid[:, :, 0], cmap=cmap, vmin=0, vmax=len(colors) - 1)
+        plt.imshow(self.grid, cmap=cmap, vmin=0, vmax=len(colors) - 1)
         plt.title("Ant Clustering Results")
         plt.axis("off")
 
