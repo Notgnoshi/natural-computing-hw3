@@ -63,23 +63,28 @@ class Ant:
         :param k_x: The local x coordinate of the Ant in the kernel
         :param k_y: The local y coordinate of the Ant in the kernel
         """
-        color = kernel[k_x, k_y, 0]
-        cell_occupied = color != 0
+        cell_status = kernel[k_x, k_y, 0]
+        cell_occupied = bool(cell_status)
 
         # Pick up
         if not self.loaded and cell_occupied:
             # Calculate p based on value in grid cell
-            f = self.perceived_fraction(kernel[:, :, 0], color)
+            f = self.perceived_fraction(kernel[:, :, 0], cell_status)
             # Dermine if ant should pick up value
             if np.random.random() <= self.pickup_probability(f):
-                self.loaded = True
+                # NOTE: Removing the item from the grid makes it impossible to use the item in the
+                # perceived fraction calculation. However, from our tests, it appears this works
+                # best.
+                self.load = cell_status
+                kernel[k_x, k_y, 0] = EMPTY
         # Drop off
         elif self.loaded and not cell_occupied:
             # Calculate p based on value ant is carryin
-            f = self.perceived_fraction(kernel[:, :, 0], color)
+            f = self.perceived_fraction(kernel[:, :, 0], self.load)
             # Determine if ant should drop value
             if np.random.random() <= self.dropoff_probability(f):
-                self.loaded = False
+                kernel[k_x, k_y, 0] = self.load
+                self.load = EMPTY
 
     def update_location(self, kernel, k_x, k_y):
         """Randomly take a step in one of the neighboring cells.
@@ -88,22 +93,14 @@ class Ant:
         :param k_x: The Ant's local x coordinate in the neighborhood.
         :param k_y: The Ant's local y coordinate in the neighborhood.
         """
-        # TODO: This randomly selects *any* cell in the entire neighborhood. Pick a random
-        # unoccupied cell only one cell away from (k_x, k_y).
-        unoccupied_by_ants = kernel[:, :, 1] != 1
-        unoccupied_by_items = kernel[:, :, 0] == 0
-        # Find unoccupied indices.
-        x, y = np.where(unoccupied_by_ants)
-        if self.loaded:
-            x, y = np.where(np.logical_and(unoccupied_by_ants, unoccupied_by_items))
+        max_x, max_y = kernel.shape[:2]
+        # Use the size of the kernel to make sure the ant doesn't run off the edge
+        new_x = min(max(k_x + np.random.randint(-1, 1 + 1), 0), max_x - 1)
+        new_y = min(max(k_y + np.random.randint(-1, 1 + 1), 0), max_y - 1)
 
-        i = np.random.randint(len(x))
-        new_x, new_y = x[i], y[i]
-
-        # Move the object from the old location to the new location.
-        if self.loaded and (k_x, k_y) != (new_x, new_y):
-            kernel[new_x, new_y, 0] = kernel[k_x, k_y, 0]
-            kernel[k_x, k_y, 0] = EMPTY
+        # Update the ant's position in the ant layer.
+        kernel[k_x, k_y, 1] = 0
+        kernel[new_x, new_y, 1] = 1
 
         self.x = self.x - (k_x - new_x)
         self.y = self.y - (k_y - new_y)
