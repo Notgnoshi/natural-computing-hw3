@@ -31,10 +31,10 @@ def parse_args():
     )
 
     parser.add_argument(
-        "--vmin", type=float, default=0.01, help="The particle velocity lower bound."
+        "--vmin", type=float, default=-0.1, help="The particle velocity lower bound."
     )
     parser.add_argument(
-        "--vmax", type=float, default=1.0, help="The particle velocity upper bound."
+        "--vmax", type=float, default=+0.1, help="The particle velocity upper bound."
     )
 
     parser.add_argument(
@@ -44,6 +44,9 @@ def parse_args():
         "--iterations", "-i", type=int, default=100, help="The number of iterations to use."
     )
 
+    parser.add_argument(
+        "--animate", action="store_true", default=False, help="Animate the swarm's progress."
+    )
     parser.add_argument(
         "--headless", action="store_true", default=False, help="A headless mode for profiling."
     )
@@ -67,20 +70,11 @@ def main(args):
         vmin=args.vmin,
         vmax=args.vmax,
     )
-    opt = swarm.optimize(func, iters=args.iterations)
+    opt = swarm.optimize(func, iters=args.iterations, animate=args.animate and not args.headless)
     print("optimum:", opt)
 
     if not args.headless:
-        x = np.linspace(args.xmin, args.xmax, 200)
-
-        plt.plot(x, func(x), label="$f(x)$")
-        plt.plot(opt, func(opt), ".", label=r"$\hat x$")
-
-        plt.title("Particle Swarm Results")
-        plt.xlabel("$x$")
-        plt.ylabel("$f(x)$")
-        plt.legend()
-        plt.show()
+        swarm.plot(func, blocking=True)
 
 
 if __name__ == "__main__":
