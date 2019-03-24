@@ -8,15 +8,13 @@ spec = [
     ("y", numba.int32),
     ("k1", numba.float32),
     ("k2", numba.float32),
-    ("loaded", numba.boolean),
+    ("load", numba.int32),
 ]
 
 
 @numba.jitclass(spec)
 class Ant:
     """An ant entity that moves around and picks up and puts down objects."""
-
-    __slots__ = "x", "y", "k1", "k2", "load"
 
     def __init__(self, x, y, k1, k2):
         """Initialize an Ant with its location and tunable parameters.

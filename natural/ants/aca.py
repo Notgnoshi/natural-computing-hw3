@@ -142,48 +142,6 @@ class ACA:
 
         self.ants = ants
 
-    @staticmethod
-    def __kernel(matrix, x1, y1, x2, y2):
-        """Get the kernel from (x1, y1) to (x2, y2) from the given matrix."""
-        # Only get the first two dimensions of the matrix if more exist.
-        width, height = matrix.shape[:2]
-        x1 = max(0, min(x1, width))
-        x2 = max(0, min(x2, width))
-        y1 = max(0, min(y1, height))
-        y2 = max(0, min(y2, height))
-        return matrix[x1 : x2 + 1, y1 : y2 + 1]
-
-    @staticmethod
-    def __kernel_center(matrix, x, y, r):
-        """Get the kernel centered at (x, y) with radius `r` from the given matrix."""
-        x1, x2 = x - r, x + r
-        y1, y2 = y - r, y + r
-        return ACA.__kernel(matrix, x1, y1, x2, y2)
-
-    @staticmethod
-    def __kernel_coords(coords, radius):
-        """Given a set of matrix coordinates and a kernel radius, get the local kernel coordinates.
-
-        In most cases the kernel coordinates will be (r, r) -- the center of the kernel. That is,
-        unless the kernel overlaps the edge of the matrix. In this edge case (it's a pun, get it?)
-        the local coordinates shift by however much the kernel goes off the edge of the matrix.
-
-        For our use cases, the given coordinates will always be contained inside the matrix, so
-        the bottom and right most coordinates will remain unchanged. The relative coordinates will
-        only change if the kernel overlaps the top or left boundary, because the coordinates are
-        relative to the upper left corner of the kernel.
-
-        :param coords: The absolute matrix (x, y) coordinates.
-        :param r: The kernel square radius.
-        """
-        x, y = coords
-        return min(radius, x), min(radius, y)
-
-    def getkernel(self, x, y):
-        """Get the kernel centered at the given coordinates.
-
-        self.ants = ants
-
     def update(self):
         """Perform one iteration of the ACA."""
         for ant in self.ants:
@@ -207,8 +165,8 @@ class ACA:
             # Every so often, drop every load and make a position update without a load update.
             if period is not None and i % period == 0:
                 for ant in self.ants:
-                    k = self.getkernel(ant.x, ant.y)
-                    k_x, k_y = self.__kernel_coords((ant.x, ant.y), self.radius)
+                    k = kernel_center(self.grid, ant.x, ant.y, self.radius)
+                    k_x, k_y = kernel_coords((ant.x, ant.y), self.radius)
                     ant.dropoff(k, k_x, k_y)
                     ant.update_location(k, k_x, k_y)
 
