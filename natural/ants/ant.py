@@ -92,11 +92,10 @@ class Ant:
         i = np.random.randint(len(x))
         new_x, new_y = x[i], y[i]
 
-        if self.loaded:
-            # Move the object from the old location to the new location.
+        # Move the object from the old location to the new location.
+        if self.loaded and (k_x, k_y) != (new_x, new_y):
             kernel[new_x, new_y, 0] = kernel[k_x, k_y, 0]
-            if (k_x, k_y) != (new_x, new_y):
-                kernel[k_x, k_y, 0] = EMPTY
+            kernel[k_x, k_y, 0] = EMPTY
 
         self.x = self.x - (k_x - new_x)
         self.y = self.y - (k_y - new_y)
