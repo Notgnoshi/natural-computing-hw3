@@ -52,7 +52,7 @@ class Swarm:
         self.best = self.particles[b]
 
         for i in range(iters):
-            # print(f"\rf({self.best:.04f}) = {func(self.best):.04f}", end="")
+            print(f"\rf({self.best:.04f}) = {func(self.best):.04f}", end="")
             self.update(func)
 
             if animate and i % 5 == 0:
@@ -91,4 +91,4 @@ class Swarm:
             plt.show()
         else:
             # WTF. Why does black add the number separators here, but not in the other class?
-            plt.pause(0.00000001)
+            plt.pause(0.000_000_01)

@@ -4,7 +4,6 @@ import numpy as np
 from matplotlib.colors import ListedColormap
 
 from .ant import Ant
-from .constants import EMPTY
 
 
 @numba.jit(nopython=True)
@@ -88,7 +87,6 @@ class ACA:
         self.colors = colors
         self.grid = None
         self.init_grid()
-        self.temp = np.zeros_like(self.grid[:, :, 0], dtype=int)
         self.ants = None
         self.init_ants()
 
@@ -169,11 +167,6 @@ class ACA:
         :param blocking: If blocking is True, display the plot GUI, and wait for
         the user to exit. Otherwise, update the existing plot without waiting.
         """
-        self.temp.fill(EMPTY)
-        for ant in self.ants:
-            self.temp[ant.x, ant.y] = ant.load
-
-
         colors = ["white", "red", "blue", "green", "orange", "purple", "brown", "pink"]
         cmap = ListedColormap(colors)
 
@@ -186,7 +179,7 @@ class ACA:
         plt.clf()
         # Don't be an idiot. Set the largest value to the most amount of colors supported.
         # If more colors are provided, then fail silently (shame on me).
-        plt.imshow(self.grid[:, :, 0] + self.temp, cmap=cmap, vmin=0, vmax=len(colors) - 1)
+        plt.imshow(self.grid[:, :, 0], cmap=cmap, vmin=0, vmax=len(colors) - 1)
         plt.title("Ant Clustering Results")
         plt.axis("off")
 
