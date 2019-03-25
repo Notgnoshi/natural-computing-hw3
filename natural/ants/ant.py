@@ -16,6 +16,8 @@ spec = [
 class Ant:
     """An ant entity that moves around and picks up and puts down objects."""
 
+    __slots__ = "x", "y", "k1", "k2", "load", "loaded"
+
     def __init__(self, x, y, k1, k2):
         """Initialize an Ant with its location and tunable parameters.
 
@@ -28,6 +30,7 @@ class Ant:
         self.y = y
         self.k1 = k1
         self.k2 = k2
+        self.load = EMPTY
         self.loaded = False
 
     def update(self, kernel, k_x, k_y):
@@ -49,11 +52,13 @@ class Ant:
 
     def pickup(self, kernel, k_x, k_y):
         self.load = kernel[k_x, k_y, 0]
-        kernel[k_x, k_y, 0] = EMPTY
+        self.loaded = True
+        # kernel[k_x, k_y, 0] = EMPTY
 
     def dropoff(self, kernel, k_x, k_y):
-        kernel[k_x, k_y, 0] = self.load
+        # kernel[k_x, k_y, 0] = self.load
         self.load = EMPTY
+        self.loaded = False
 
     def update_load(self, kernel, k_x, k_y):
         """Randomly pick up or drop off an object.
@@ -106,7 +111,7 @@ class Ant:
 
         # Find unoccupied indices.
         x, y = np.where(unoccupied_by_ants)
-        if self.load != EMPTY:
+        if self.loaded:
             x, y = np.where(np.logical_and(unoccupied_by_ants, unoccupied_by_items))
 
         i = np.random.randint(len(x))
@@ -115,6 +120,11 @@ class Ant:
         # Update the ant's position in the ant layer.
         kernel[k_x, k_y, 1] = 0
         kernel[new_x, new_y, 1] = 1
+
+        # Move the underlying object with the ant.
+        if self.loaded:
+            kernel[k_x, k_y, 0] = EMPTY
+            kernel[new_x, new_y, 0] = self.load
 
         self.x = self.x - (k_x - new_x)
         self.y = self.y - (k_y - new_y)
