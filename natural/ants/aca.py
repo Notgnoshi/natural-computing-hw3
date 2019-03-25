@@ -190,10 +190,11 @@ class ACA:
             kernel = kernel_center(self.grid, ant.x, ant.y, self.radius)
             ant.update(kernel, *kernel_coords((ant.x, ant.y), self.radius))
 
-    def run(self, iters, animate=False):
+    def run(self, iters, period=None, animate=False):
         """Run the specified number of iterations of the ACA.
 
         :param iters: The number of iterations to run the ACA.
+        :param period: How often to force the ants to drop all of their items.
         :param animate: Whether or not to plot the progress of the ACA, defaults to False
         :returns: The grid after the final iteration.
         """
@@ -203,8 +204,13 @@ class ACA:
             if animate and i % 50 == 0:
                 self.plot(blocking=False)
 
-        for ant in self.ants:
-            ant.dropoff(self.getkernel(ant.x, ant.y), *self.__kernel_coords((ant.x, ant.y), self.radius))
+            # Every so often, drop every load and make a position update without a load update.
+            if period is not None and i % period == 0:
+                for ant in self.ants:
+                    k = self.getkernel(ant.x, ant.y)
+                    k_x, k_y = self.__kernel_coords((ant.x, ant.y), self.radius)
+                    ant.dropoff(k, k_x, k_y)
+                    ant.update_location(k, k_x, k_y)
 
     def plot(self, blocking=False):
         """Plot the grid.

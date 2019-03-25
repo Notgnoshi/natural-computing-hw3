@@ -25,6 +25,7 @@ def parse_args():
     parser.add_argument("--radius", type=int, default=1, help="The ant's perceiveable radius.")
     parser.add_argument("--k1", type=float, default=0.1, help="The k1 tunable parameter")
     parser.add_argument("--k2", type=float, default=0.1, help="The k2 tunable parameter")
+    parser.add_argument("--reset-period", "-p", type=int, default=-1, help="Force ants to drop off their items every P iterations. -1 to disable.")
     parser.add_argument(
         "--animate",
         "-a",
@@ -49,10 +50,15 @@ def parse_args():
 
 def main(args):
     print(args)
+    if args.reset_period < 0:
+        args.reset_period = None
+    elif args.reset_period > args.iterations:
+        print("Reset period must be less than the number of iterations.")
+        args.reset_period = None
 
     alg = ACA((args.width, args.height), args.colors, args.ants, args.radius, args.k1, args.k2)
     # Only animate when the flag is set, and not running in headless mode.
-    alg.run(args.iterations, animate=args.animate and not args.headless)
+    alg.run(args.iterations, period=args.reset_period, animate=args.animate and not args.headless)
 
     if not args.headless:
         # TODO: Plot the initial and end grid on the same window.
