@@ -170,6 +170,12 @@ class ACA:
                     ant.dropoff(k, k_x, k_y)
                     ant.update_location(k, k_x, k_y)
 
+        for ant in self.ants:
+            k = kernel_center(self.grid, ant.x, ant.y, self.radius)
+            k_x, k_y = kernel_coords((ant.x, ant.y), self.radius)
+            ant.dropoff(k, k_x, k_y)
+            ant.update_location(k, k_x, k_y)
+
     def plot(self, blocking=False):
         """Plot the grid.
 
