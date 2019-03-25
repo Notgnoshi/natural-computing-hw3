@@ -8,13 +8,15 @@ spec = [
     ("y", numba.int32),
     ("k1", numba.float32),
     ("k2", numba.float32),
-    ("loaded", numba.boolean),
+    ("load", numba.int32),
 ]
 
 
-@numba.jitclass(spec)
+# @numba.jitclass(spec)
 class Ant:
     """An ant entity that moves around and picks up and puts down objects."""
+
+    __slots__ = "x", "y", "k1", "k2", "load"
 
     def __init__(self, x, y, k1, k2):
         """Initialize an Ant with its location and tunable parameters.
@@ -28,7 +30,7 @@ class Ant:
         self.y = y
         self.k1 = k1
         self.k2 = k2
-        self.loaded = False
+        self.load = EMPTY
 
     def update(self, kernel, k_x, k_y):
         """Attempt to pick up or drop off an item at the current location, then make a random step.
@@ -67,19 +69,21 @@ class Ant:
         cell_occupied = color != 0
 
         # Pick up
-        if not self.loaded and cell_occupied:
+        if self.load == EMPTY and cell_occupied:
             # Calculate p based on value in grid cell
             f = self.perceived_fraction(kernel[:, :, 0], color)
             # Dermine if ant should pick up value
             if np.random.random() <= self.pickup_probability(f):
-                self.loaded = True
+                self.load = color
+                kernel[k_x, k_y, 0] = EMPTY
         # Drop off
-        elif self.loaded and not cell_occupied:
+        elif self.load != EMPTY and not cell_occupied:
             # Calculate p based on value ant is carryin
             f = self.perceived_fraction(kernel[:, :, 0], color)
             # Determine if ant should drop value
             if np.random.random() <= self.dropoff_probability(f):
-                self.loaded = False
+                kernel[k_x, k_y, 0] = self.load
+                self.load = EMPTY
 
     def update_location(self, kernel, k_x, k_y):
         """Randomly take a step in one of the neighboring cells.
@@ -88,22 +92,40 @@ class Ant:
         :param k_x: The Ant's local x coordinate in the neighborhood.
         :param k_y: The Ant's local y coordinate in the neighborhood.
         """
-        # TODO: This randomly selects *any* cell in the entire neighborhood. Pick a random
-        # unoccupied cell only one cell away from (k_x, k_y).
+        # width, height = kernel.shape[:2]
+
+        # x1 = k_x - 1
+        # x2 = k_x + 1
+        # y1 = k_y - 1
+        # y2 = k_y + 1
+
+        # x1 = max(0, min(x1, width))
+        # x2 = max(0, min(x2, width))
+        # y1 = max(0, min(y1, height))
+        # y2 = max(0, min(y2, height))
+
+        # neighborhood = kernel[x1 : x2 + 1, y1 : y2 + 1, :].copy()
+
         unoccupied_by_ants = kernel[:, :, 1] != 1
         unoccupied_by_items = kernel[:, :, 0] == 0
+        neighborhood = np.zeros(kernel.shape[:2], dtype=bool)
+        neighborhood[k_x - 1 : k_x + 2, k_y - 1 : k_y + 2] = True
+
         # Find unoccupied indices.
         x, y = np.where(unoccupied_by_ants)
-        if self.loaded:
-            x, y = np.where(np.logical_and(unoccupied_by_ants, unoccupied_by_items))
+        if self.load != EMPTY:
+            x, y = np.where(np.logical_and(neighborhood, unoccupied_by_ants))
 
-        i = np.random.randint(len(x))
-        new_x, new_y = x[i], y[i]
+        if len(x):
+            i = np.random.randint(len(x))
+            new_x, new_y = x[i], y[i]
+        else:
+            new_x, new_y = 0, 0
 
-        # Move the object from the old location to the new location.
-        if self.loaded and (k_x, k_y) != (new_x, new_y):
-            kernel[new_x, new_y, 0] = kernel[k_x, k_y, 0]
-            kernel[k_x, k_y, 0] = EMPTY
+        # # Move the object from the old location to the new location.
+        # if self.loaded and (k_x, k_y) != (new_x, new_y):
+        #     kernel[new_x, new_y, 0] = kernel[k_x, k_y, 0]
+        #     kernel[k_x, k_y, 0] = EMPTY
 
         self.x = self.x - (k_x - new_x)
         self.y = self.y - (k_y - new_y)
