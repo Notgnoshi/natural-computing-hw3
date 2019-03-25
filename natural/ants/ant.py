@@ -16,7 +16,7 @@ spec = [
 class Ant:
     """An ant entity that moves around and picks up and puts down objects."""
 
-    __slots__ = "x", "y", "k1", "k2", "load", "loaded"
+    __slots__ = "x", "y", "k1", "k2", "load"
 
     def __init__(self, x, y, k1, k2):
         """Initialize an Ant with its location and tunable parameters.
@@ -31,7 +31,6 @@ class Ant:
         self.k1 = k1
         self.k2 = k2
         self.load = EMPTY
-        self.loaded = False
 
     def update(self, kernel, k_x, k_y):
         """Attempt to pick up or drop off an item at the current location, then make a random step.
@@ -52,13 +51,11 @@ class Ant:
 
     def pickup(self, kernel, k_x, k_y):
         self.load = kernel[k_x, k_y, 0]
-        self.loaded = True
-        # kernel[k_x, k_y, 0] = EMPTY
+        kernel[k_x, k_y, 0] = EMPTY
 
     def dropoff(self, kernel, k_x, k_y):
-        # kernel[k_x, k_y, 0] = self.load
+        kernel[k_x, k_y, 0] = self.load
         self.load = EMPTY
-        self.loaded = False
 
     def update_load(self, kernel, k_x, k_y):
         """Randomly pick up or drop off an object.
@@ -80,7 +77,7 @@ class Ant:
         cell_occupied = bool(cell_status)
 
         # Pick up
-        if not self.loaded and cell_occupied:
+        if self.load == EMPTY and cell_occupied:
             # Calculate p based on value in grid cell
             f = self.perceived_fraction(kernel[:, :, 0], cell_status)
             # Dermine if ant should pick up value
@@ -90,7 +87,7 @@ class Ant:
                 # best.
                 self.pickup(kernel, k_x, k_y)
         # Drop off
-        elif self.loaded and not cell_occupied:
+        elif self.load != EMPTY and not cell_occupied:
             # Calculate p based on value ant is carryin
             f = self.perceived_fraction(kernel[:, :, 0], self.load)
             # Determine if ant should drop value
@@ -111,7 +108,7 @@ class Ant:
 
         # Find unoccupied indices.
         x, y = np.where(unoccupied_by_ants)
-        if self.loaded:
+        if self.load != EMPTY:
             x, y = np.where(np.logical_and(unoccupied_by_ants, unoccupied_by_items))
 
         i = np.random.randint(len(x))
@@ -120,11 +117,6 @@ class Ant:
         # Update the ant's position in the ant layer.
         kernel[k_x, k_y, 1] = 0
         kernel[new_x, new_y, 1] = 1
-
-        # Move the underlying object with the ant.
-        if self.loaded:
-            kernel[k_x, k_y, 0] = EMPTY
-            kernel[new_x, new_y, 0] = self.load
 
         self.x = self.x - (k_x - new_x)
         self.y = self.y - (k_y - new_y)
