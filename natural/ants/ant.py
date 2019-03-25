@@ -47,6 +47,14 @@ class Ant:
         self.update_load(kernel, k_x, k_y)
         self.update_location(kernel, k_x, k_y)
 
+    def pickup(self, kernel, k_x, k_y):
+        self.load = kernel[k_x, k_y, 0]
+        kernel[k_x, k_y, 0] = EMPTY
+
+    def dropoff(self, kernel, k_x, k_y):
+        kernel[k_x, k_y, 0] = self.load
+        self.load = EMPTY
+
     def update_load(self, kernel, k_x, k_y):
         """Randomly pick up or drop off an object.
 
@@ -75,16 +83,14 @@ class Ant:
                 # NOTE: Removing the item from the grid makes it impossible to use the item in the
                 # perceived fraction calculation. However, from our tests, it appears this works
                 # best.
-                self.load = cell_status
-                kernel[k_x, k_y, 0] = EMPTY
+                self.pickup(kernel, k_x, k_y)
         # Drop off
         elif self.loaded and not cell_occupied:
             # Calculate p based on value ant is carryin
             f = self.perceived_fraction(kernel[:, :, 0], self.load)
             # Determine if ant should drop value
             if np.random.random() <= self.dropoff_probability(f):
-                kernel[k_x, k_y, 0] = self.load
-                self.load = EMPTY
+                self.dropoff(kernel, k_x, k_y)
 
     def update_location(self, kernel, k_x, k_y):
         """Randomly take a step in one of the neighboring cells.
