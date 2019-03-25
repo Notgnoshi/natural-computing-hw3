@@ -203,6 +203,9 @@ class ACA:
             if animate and i % 50 == 0:
                 self.plot(blocking=False)
 
+        for ant in self.ants:
+            ant.dropoff(self.getkernel(ant.x, ant.y), *self.__kernel_coords((ant.x, ant.y), self.radius))
+
     def plot(self, blocking=False):
         """Plot the grid.
 
