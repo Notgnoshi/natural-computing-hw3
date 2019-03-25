@@ -101,9 +101,14 @@ class Ant:
         """
         # TODO: This randomly selects *any* cell in the entire neighborhood. Pick a random
         # unoccupied cell only one cell away from (k_x, k_y).
-        ant_locations = kernel[:, :, 1]
+        unoccupied_by_ants = kernel[:, :, 1] == EMPTY
+        unoccupied_by_items = kernel[:, :, 0] == EMPTY
+
         # Find unoccupied indices.
-        x, y = np.where(ant_locations != 1)
+        x, y = np.where(unoccupied_by_ants)
+        if self.load != EMPTY:
+            x, y = np.where(np.logical_and(unoccupied_by_ants, unoccupied_by_items))
+
         i = np.random.randint(len(x))
         new_x, new_y = x[i], y[i]
 
