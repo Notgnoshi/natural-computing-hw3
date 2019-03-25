@@ -93,10 +93,13 @@ class Ant:
         :param k_x: The Ant's local x coordinate in the neighborhood.
         :param k_y: The Ant's local y coordinate in the neighborhood.
         """
-        max_x, max_y = kernel.shape[:2]
-        # Use the size of the kernel to make sure the ant doesn't run off the edge
-        new_x = min(max(k_x + np.random.randint(-1, 1 + 1), 0), max_x - 1)
-        new_y = min(max(k_y + np.random.randint(-1, 1 + 1), 0), max_y - 1)
+        # TODO: This randomly selects *any* cell in the entire neighborhood. Pick a random
+        # unoccupied cell only one cell away from (k_x, k_y).
+        ant_locations = kernel[:, :, 1]
+        # Find unoccupied indices.
+        x, y = np.where(ant_locations != 1)
+        i = np.random.randint(len(x))
+        new_x, new_y = x[i], y[i]
 
         # Update the ant's position in the ant layer.
         kernel[k_x, k_y, 1] = 0
