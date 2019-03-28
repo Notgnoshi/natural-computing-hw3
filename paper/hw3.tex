@@ -2,7 +2,7 @@
 \input{homework.sty}
 
 \title{Homework 3}
-\author{Austin Gill \\ Partner TBD}
+\author{Austin Gill \\ Kali Regenold}
 
 \begin{document}
 \maketitle
@@ -16,13 +16,13 @@
 
 \subsection{Statement}
 
-Use ant clustering to cluster uniformly distributed red and blue objects on a grid. The grid should
-be $200 \times 200$ and there should be 100 each of red and blue objects. Use 500 ants.
+Use ant clustering to cluster uniformly distributed red and blue objects on a grid.
+The grid should be $200 \times 200$ and there should be 100 each of red and blue objects.
+Use 500 ants.
 
 \subsection{Method}
 
-The ant clustering algorithm is given by \autoref{alg:ant-clustering}, and is tunable by the
-definitions of $f$, $p_p$, $p_d$, and the paremeters $iters$, $ants$, $k_1$, and $k_2$.
+The ant clustering algorithm is given by \autoref{alg:ant-clustering}, and is tunable by the definitions of $f$, $p_p$, $p_d$, and the paremeters $iters$, $ants$, $k_1$, and $k_2$.
 
 \begin{algorithm}
     % \begin{noindent}
@@ -68,64 +68,50 @@ The pickup and dropoff probabilities are typically given by
 and the perceived fraction $f$ by
 \begin{equation}
     f(\vec x_i) = \begin{cases}
-        \displaystyle\frac{1}{s^2} \sum_{x_j \in \text{neighbors}} \left(1 -
-        \frac{\mathrm{d}(\vec{x_i}, \vec{x_j})}{\alpha}\right) & \text{if } f > 0 \\
-        0                                                      & \text{otherwise}
+        \displaystyle\frac{1}{s^2}\cdot\sum_{x_j \in \text{neighbors}}
+        \left(1 - \frac{\mathrm{d}(\vec{x_i}, \vec{x_j})}{\alpha}\right) & \text{if } f > 0 \\
+        0                                                                & \text{otherwise}
     \end{cases}\label{eq:aca:fraction}
 \end{equation}
-where the sum is over the square neighborhood of configurable size around the cell occupied by
-$\vec{x_i}$. The parameter $\alpha$ is a tunable parameter that determines the scale of
-dissimilarity, and the distance metric $\mathrm d(\vec x, \vec y)$ is the Euclidean distance
-\textit{in the original, unprojected, space}. For this problem though, we are starting with
-uniformly distributed points already in 2 dimensions.\footnote{This is uncommon for ant clustering
-    algorithms, but is suitable for a homework problem because the process of performing the
-    projection from a possibly very high dimensional space to 2 dimensions is nontrivial.
+where the sum is over the square neighborhood of configurable size around the cell occupied by $\vec{x_i}$.
+The parameter $\alpha$ is a tunable parameter that determines the scale of dissimilarity, and the distance metric $\mathrm d(\vec x, \vec y)$ is the Euclidean distance \textit{in the original, unprojected, space}.
+For this problem though, we are starting with uniformly distributed points already in 2 dimensions.
+\footnote{This is uncommon for ant clustering algorithms, but is suitable for a homework problem because the process of performing the projection from a possibly very high dimensional space to 2 dimensions is nontrivial.
     Especially so if the projection should retain certain characteristics of the original space.
 
-    My current understanding though, is that even a randomish projection, or a naive application of
-    a dimension reduction technique like PCA is fine, because the perceived fraction $f$ uses the
-    distance metric $\mathrm{d}(\vec x, \vec y)$ in the original space, and it should be possible
-    to project the found clusters in 2 dimensions back into the original space.}
+    My current understanding though, is that even a randomish projection, or a naive application of a dimension reduction technique like PCA is fine, because the perceived fraction $f$ uses the distance metric $\mathrm{d}(\vec x, \vec y)$ in the original space, and it should be possible to project the found clusters in 2 dimensions back into the original space.}
 
-However, it seems this definition is nonintuitively recursive, I believe the intent of
-\autoref{eq:aca:fraction} is that shown in \autoref{eq:aca:fraction-max}.
+However, it seems this definition is nonintuitively recursive, I believe the intent of \autoref{eq:aca:fraction} is that shown in \autoref{eq:aca:fraction-max}.
 
 \begin{equation}
-    f(\vec x_i) = \displaystyle\max\left(\frac{1}{s^2} \sum_{x_j \in \text{neighbors}} \left(1 -
-        \frac{\mathrm{d}(\vec{x_i}, \vec{x_j})}{\alpha}\right), 0
-    \right)\label{eq:aca:fraction-max}
+    f(\vec x_i) = \displaystyle\max\left(\frac{1}{s^2}\cdot\sum_{x_j \in \text{neighbors}}
+    \left(1 - \frac{\mathrm{d}(\vec{x_i}, \vec{x_j})}{\alpha}\right), 0 \right)\label{eq:aca:fraction-max}
 \end{equation}
 
-Regardless, since the clustering is being performed in the same space as the objects, it is
-possible to use a better perceived fraction function.
+Regardless, since the clustering is being performed in the same space as the objects, it is possible to use a better perceived fraction function.
 
 \begin{equation}
-    f(\vec x_i) = \sum_{x_j \in \text{neighbors}}\bigg(\mathrm{type}(x_i) =
-    \mathrm{type}(x_j)\bigg)\label{eq:aca:density}
+    f(\vec x_i) = \frac{1}{s^2}\cdot\sum_{x_j \in \text{neighbors}}\bigg(\mathrm{type}(x_i) = \mathrm{type}(x_j)\bigg)\label{eq:aca:density}
 \end{equation}
 
-That is, to count\todo{Should this be normalized?}{} the number of objects in the neighborhood (of
-configurable size) around $\vec x_i$ with the same type as $\vec x_i$.
+That is, to count the number of objects in the neighborhood (of configurable size) around $\vec x_i$ with the same type as $\vec x_i$.
 
 \subsection{Results}
-
-\todoinline{Recap simulated annealing results.}
 
 \section{Particle Swarm Optimization}
 
 \subsection{Statement}
 
 Use particle swarm optimization to optimize the function
-
-\[f(x) = 2^{-2{\left(\frac{(x - 0.1)}{0.9}\right)}^2}{\big(\sin(5\pi x)\big)}^6\]
-
+\begin{equation}
+    f(x) = 2^{-2{\left(\frac{(x - 0.1)}{0.9}\right)}^2}{\big(\sin(5\pi x)\big)}^6\label{eq:pso:objective}
+\end{equation}
 and compare the results with those of simulated annealing from Homework 1.
 
 \subsection{Method}
 
-The standard particle swarm algorithm from the book is given in \autoref{alg:particle-swarm}. The
-algorithm is tunable by the number of iterations, the acceleration constants $AC_1$ and $AC_2$, and
-the range of allowable velocities $[v_{\min}, v_{\max}]$.
+The standard particle swarm algorithm from the book is given in \autoref{alg:particle-swarm}.
+The algorithm is tunable by the number of iterations, the acceleration constants $AC_1$ and $AC_2$, and the range of allowable velocities $[v_{\min}, v_{\max}]$.
 
 \begin{algorithm}
     % \begin{noindent}
@@ -172,21 +158,20 @@ the range of allowable velocities $[v_{\min}, v_{\max}]$.
 
 The book states that the acceleration constants should equal 4.1. That is,
 \[AC_1 + AC_2 = 4.1\]
-with $AC_1 = AC_2 = 2.05$. The acceleration constants are used to draw the vectors of
-weights $\vec{\varphi_1}$ and $\vec{\varphi_2}$ from a uniform distribution of $[0, AC_1]$ and $[0,
-            AC_2]$ respectively. Note that the $\otimes$ symbol is elementwise multiplication.
+with $AC_1 = AC_2 = 2.05$.
+The acceleration constants are used to draw the vectors of weights $\vec{\varphi_1}$ and $\vec{\varphi_2}$ from a uniform distribution of $[0, AC_1]$ and $[0, AC_2]$ respectively.
+Note that the $\otimes$ symbol is elementwise multiplication.
 
 The update step
-\[\Delta\vec{x_i} \gets \Delta\vec{x_i} + \vec{\varphi_1} \otimes (\vec{p_i} - \vec{x_i}) +
-    \vec{\varphi_2} \otimes (\vec{p_k} - \vec{x_i})\]
-considers the direction towards the particle's best known position, and the best known position of
-its neighbors. It updates its velocity as a randomly weighted linear combination of those
-directions.
+\begin{equation}
+    \Delta\vec{x_i} \gets \Delta\vec{x_i} + \vec{\varphi_1} \otimes (\vec{p_i} - \vec{x_i}) + \vec{\varphi_2} \otimes (\vec{p_k} - \vec{x_i})\label{eq:pso:update}
+\end{equation}
+considers the direction towards the particle's best known position, and the best known position of its neighbors.
+It updates its velocity as a randomly weighted linear combination of those directions.
 
-There are several variants of \autoref{alg:particle-swarm} to consider. One such variation is to
-consider, not the each best historical position of each particle's neighbors, but the best
-historical position of the entire swarm. This difference is shown in
-\autoref{alg:particle-swarm-variant}
+There are several variants of \autoref{alg:particle-swarm} to consider.
+One such variation is to consider, not the each best historical position of each particle's neighbors, but the best historical position of the entire swarm.
+This difference is shown in \autoref{alg:particle-swarm-variant}.
 
 \begin{algorithm}
     % \begin{noindent}
@@ -233,5 +218,8 @@ historical position of the entire swarm. This difference is shown in
 
 \todoinline{Determine which of \autoref{alg:particle-swarm}, \autoref{alg:particle-swarm-variant},
     or something else to use}
+
+\subsection{Results}
+\todoinline{Recap simulated annealing results.}
 
 \end{document}
