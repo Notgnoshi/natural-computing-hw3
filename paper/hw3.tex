@@ -98,7 +98,41 @@ That is, to count the number of objects in the neighborhood (of configurable siz
 Note that this density function is normalized by the size of the neighborhood as well.
 This was important, because we wanted to play with as many tweakable parameters as possible --- the neighborhood size being one of those parameters.
 
+\subsection{Implementation}
+\todoinline{
+    Comment on interesting portions of the implementation, providing source code.
+    \begin{itemize}
+        \item Show how the grid and ants are initialized, and mention that our decision to allow multiple colors complicated things.
+        \item The fact we used Numba to JIT-compile our code to get an over $2\times$ speedup.
+        \item Show the output of \mintinline{text}{./prob1 --help} and emphasize that we wanted to play with the tweakable parameters, in addition to the problem size, number of colors, etc.
+        \item Mention the datastructures we ended up using and why (two layers of the grid, and a list of \mintinline{python}{Ant} objects.)
+        \item Make note that the \mintinline{python}{update_position()} method still randomly teleports an ant to an unoccupied cell in its neighborhood (even if the radius is greater than 1) and why.
+
+              We struggled getting one step updates to work, and I still don't understand why.
+              Shrinking the kernel before the position update broke everything\dots
+
+              Also mention that storing the ants in a list, and the objects in the grid caused problems.
+              It would have been better to use a sparse representation where we could perform efficient lookup at a given position, but also easily iterate over the ants.
+        \item Make note that when an ant picks up an object, it removes it from the grid, so it no longer impacts the perceived fraction density calculation from \autoref{eq:aca:density}.
+    \end{itemize}
+}
+
 \subsection{Results}
+\todoinline{
+    Examine the impact of different tunable parameters.
+    In no particular order --- as I think of them
+    \begin{itemize}
+        \item Neighborhood radius
+        \item Periodic forced dropoff (and why --- one cluster sometimes formed, and every blue object got picked up, and would thus never get dropped off).
+        \item The parameters $k_1$ and $k_2$, and how they, along with the neighborhood size, and the total number of iterations impacts the quality of the clusters.
+
+              The Jupyter notebook \mintinline{text}{probabilities.ipynb} examines how $k_1$ and $k_2$ impact the pickup and dropoff probabilities, along with the neighborhood size.
+        \item The number of colors
+        \item The number of objects
+        \item The size of the grid
+        \item The number of ants (less than or greater than the total number of objects impacted cluster quality).
+    \end{itemize}
+}
 
 \section{Particle Swarm Optimization}
 
@@ -220,7 +254,22 @@ This difference is shown in \autoref{alg:particle-swarm-variant}.
 
 We implemented \autoref{alg:particle-swarm-variant} to solve the given problem.
 
+\subsection{Implementation}
+\todoinline{
+    \begin{itemize}
+        \item Show the implementation of one iteration.
+        \item Show the output of \mintinline{text}{./prob2.py --help} and mention all of the tweakable parameters we wanted to be able to play with.
+    \end{itemize}
+}
+
 \subsection{Results}
-\todoinline{Recap simulated annealing results.}
+\todoinline{
+    \begin{itemize}
+        \item Recap simulated annealing results.
+        \item Play with tweakable parameters.
+        \item Mention that simulated annealing beats out this method on this particular function.
+        \item Mention that it might have been better to implement \autoref{alg:particle-swarm} instead of \autoref{alg:particle-swarm-variant}, because this method easily finds the peak of a given spike, but using the variant method pulls to strongly towards the spike, so the swarm never explores other regions of the search space.
+    \end{itemize}
+}
 
 \end{document}
