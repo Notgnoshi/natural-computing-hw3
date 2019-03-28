@@ -81,7 +81,7 @@ For this problem though, we are starting with uniformly distributed points alrea
 
     My current understanding though, is that even a randomish projection, or a naive application of a dimension reduction technique like PCA is fine, because the perceived fraction $f$ uses the distance metric $\mathrm{d}(\vec x, \vec y)$ in the original space, and it should be possible to project the found clusters in 2 dimensions back into the original space.}
 
-However, it seems this definition is nonintuitively recursive, I believe the intent of \autoref{eq:aca:fraction} is that shown in \autoref{eq:aca:fraction-max}.
+However, it seems this definition is nonintuitively recursive, we believe the intent of \autoref{eq:aca:fraction} is that shown in \autoref{eq:aca:fraction-max}.
 
 \begin{equation}
     f(\vec x_i) = \displaystyle\max\left(\frac{1}{s^2}\cdot\sum_{x_j \in \text{neighbors}}
@@ -95,6 +95,8 @@ Regardless, since the clustering is being performed in the same space as the obj
 \end{equation}
 
 That is, to count the number of objects in the neighborhood (of configurable size) around $\vec x_i$ with the same type as $\vec x_i$.
+Note that this density function is normalized by the size of the neighborhood as well.
+This was important, because we wanted to play with as many tweakable parameters as possible --- the neighborhood size being one of those parameters.
 
 \subsection{Results}
 
@@ -216,8 +218,7 @@ This difference is shown in \autoref{alg:particle-swarm-variant}.
     \caption{A variant Particle Swarm optimization algorithm}\label{alg:particle-swarm-variant}
 \end{algorithm}
 
-\todoinline{Determine which of \autoref{alg:particle-swarm}, \autoref{alg:particle-swarm-variant},
-    or something else to use}
+We implemented \autoref{alg:particle-swarm-variant} to solve the given problem.
 
 \subsection{Results}
 \todoinline{Recap simulated annealing results.}
