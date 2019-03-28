@@ -122,6 +122,7 @@ class KernelCenterTest(unittest.TestCase):
         self.assertEqual(k.shape, (1, 1))
         self.assertEqual(k[0, 0], self.m[2, 2])
 
+
 class CoordClippingTest(unittest.TestCase):
     def test_corners(self):
         self.assertEqual(kernel_coords(coords=(0, 0), radius=1), (0, 0))

@@ -25,7 +25,13 @@ def parse_args():
     parser.add_argument("--radius", type=int, default=1, help="The ant's perceiveable radius.")
     parser.add_argument("--k1", type=float, default=0.1, help="The k1 tunable parameter")
     parser.add_argument("--k2", type=float, default=0.1, help="The k2 tunable parameter")
-    parser.add_argument("--reset-period", "-p", type=int, default=-1, help="Force ants to drop off their items every P iterations. -1 to disable.")
+    parser.add_argument(
+        "--reset-period",
+        "-p",
+        type=int,
+        default=-1,
+        help="Force ants to drop off their items every P iterations. -1 to disable.",
+    )
     parser.add_argument(
         "--animate",
         "-a",

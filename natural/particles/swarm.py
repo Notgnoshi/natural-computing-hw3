@@ -90,5 +90,4 @@ class Swarm:
             plt.ioff()
             plt.show()
         else:
-            # WTF. Why does black add the number separators here, but not in the other class?
             plt.pause(0.00000001)
