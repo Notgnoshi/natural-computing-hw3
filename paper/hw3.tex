@@ -407,5 +407,37 @@ Recall also that simulated annealing worked \textit{much} better.
         \item Mention that it might have been better to implement \autoref{alg:particle-swarm} instead of \autoref{alg:particle-swarm-variant}, because this method easily finds the peak of a given spike, but using the variant method pulls to strongly towards the spike, so the swarm never explores other regions of the search space.
     \end{itemize}
 }
+As mentioned above, we enabled the modification of multiple different tweakable parameters via commandline arguments.
+Below we discuss the impacts of several such parameters.
+
+We arbitrarily chose default parameters, and as mentioned below, we can get much better performance by applying some amount of intelligence.
+
+\paragraph{The Swarm Size} The easiest and most obvious parameter to tweak for the particle swarm algorithm is the number of particles to use.
+With our poorly chosen default parameters, simply increasing the number of particles was sufficient to guarantee convergence to the solution.
+
+This is an acceptable method due to the size and complexity of the problem.
+We are optimizing a well-behaved univariate function over a small feasible region with a relatively small number of spikes.
+All the swarm needs to do to converge to the solution is begin with at least one particle on the largest spike.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{figures/pso-100-particles.eps}
+    \caption{The PSO algorithm with default parameters and 100 particles}\label{fig:pso:100-particles}
+\end{figure}
+
+\autoref{fig:pso:100-particles} and \autoref{fig:pso:5-particles} shows the results with 100 and 5 particles respectively.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{figures/pso-5-particles.eps}
+    \caption{The PSO algorithm with default parameters and 5 particles}\label{fig:pso:5-particles}
+\end{figure}
+
+Observe from \autoref{fig:pso:100-particles} that the swarm appears densest at the peak and troughs of the first spike.
+When we animated the progress of the swarm, most of the particles seemed to accumulated \textit{between} spikes, which was surprising.
+
+Notice also that the swarm is uniformly initialized throughout the domain, so the swarm mean is exactly that --- the mean of the $[0, 1]$ domain.
+\paragraph*{The Acceleration Constants $AC_1$ and $AC_2$}
+\paragraph*{The Velocity Bounds $[v_{\min}, v_{\max}]$}
 
 \end{document}
