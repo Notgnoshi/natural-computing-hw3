@@ -359,9 +359,49 @@ Setting the objective function to optimize is less easy to do from the commandli
 so the \mintinline{python}{func(x)} function in the `prob2.py' script must be edited.
 
 \subsection{Results}
+\subsubsection{Hill Climbing}
+Recall\footnote{Or let us make the recollection for you.} from Homework 1 that hill climbing struggles with ``spiky'' functions.
+\autoref{fig:pso:hill-climbing-results} shows the results from several independent runs of the hill climbing algorithm on the objective function \autoref{eq:pso:objective}.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\textwidth]{figures/prob1-hill-climbing-results.eps}
+    \caption{Results from three successive runs of the hill climbing algorithm.}\label{fig:pso:hill-climbing-results}
+\end{figure}
+
+Running the randomly-initialized hill climbing algorithm multiple times in parallel and taking the best result works okay, as long as the number of parallel runs is proportional to the density of the spikes in the feasible region.
+\autoref{fig:pso:hill-climbing-parallel} shows the aggregated results of several parallel runs of the iterated hill climbing algorithm.
+
+From this we can immediately see that there is quite a bit in the variance of multiple runs.
+The success of the hill climbing algorithm depends entirely on the its random initialization.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics{figures/prob1-hill-climbing-solution.eps}
+    \caption{Results from multiple runs of the hill climbing algorithm in parallel.}\label{fig:pso:hill-climbing-parallel}
+\end{figure}
+
+\subsubsection{Simulated Annealing}
+Recall also that simulated annealing worked \textit{much} better.
+\autoref{fig:pso:simulated-annealing-results} shows a steady peak-to-peak trend from the simulated annealing algorithm, because it accepts enough random solutions to explore non-local space, but over time cools down enough to settle to a reasonable solution.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\textwidth]{figures/prob1-simulated-annealing-results.eps}
+    \caption{Results from three successive runs of the simulated annealing algorithm.}\label{fig:pso:simulated-annealing-results}
+\end{figure}
+
+\autoref{fig:pso:simulated-annealing-parallel} is much more illuminating; not only does the simulated annealing algorithm not find non-global solutions, each iterated run settled down to exactly the same solution.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics{figures/prob1-simulated-annealing-solutions.eps}
+    \caption{Results from multiple runs of the simulated annealing algorithm in parallel.}\label{fig:pso:simulated-annealing-parallel}
+\end{figure}
+
+\subsubsection{Particle Swarm}
 \todoinline{
     \begin{itemize}
-        \item Recap simulated annealing results.
         \item Play with tweakable parameters.
         \item Mention that simulated annealing beats out this method on this particular function.
         \item Mention that it might have been better to implement \autoref{alg:particle-swarm} instead of \autoref{alg:particle-swarm-variant}, because this method easily finds the peak of a given spike, but using the variant method pulls to strongly towards the spike, so the swarm never explores other regions of the search space.
