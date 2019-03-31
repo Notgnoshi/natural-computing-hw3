@@ -437,7 +437,65 @@ Observe from \autoref{fig:pso:100-particles} that the swarm appears densest at t
 When we animated the progress of the swarm, most of the particles seemed to accumulated \textit{between} spikes, which was surprising.
 
 Notice also that the swarm is uniformly initialized throughout the domain, so the swarm mean is exactly that --- the mean of the $[0, 1]$ domain.
-\paragraph*{The Acceleration Constants $AC_1$ and $AC_2$}
-\paragraph*{The Velocity Bounds $[v_{\min}, v_{\max}]$}
+
+\paragraph{The Velocity Bounds $[v_{\min}, v_{\max}]$} The next parameter we chose to experiment with was the velocity bounds.
+The velocity bounds restrict the maximum step a particle may take after its direction has been determined.
+What we saw during animation of the swarm with small numbers of particles was that the swarm would clump around a single spike and never explore any of the other spikes.
+Increasing the maximum allowable step size to allow stepping from one spike to another fixed the local behavior we saw.
+
+This might be because particles were now free to overshoot their planned trajectories, and overshooting enabled the exploration of other regions of the search space.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{figures/pso-v01.eps}
+    \caption{Results with the default velocity bounds $[-0.1, 0.1]$}\label{fig:pso-vmin-01-vmax-01}
+\end{figure}
+
+\autoref{fig:pso-vmin-01-vmax-01} shows the PSO results with the default bounds we chose of $[-0.1, 0.1]$.
+From this, we can see that the swarm mean does not jump from spike to spike nearly enough to find the global optimum.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{figures/pso-v021.eps}
+    \caption{Results with the velocity bounds $[-0.2, 0.2]$}\label{fig:pso-vmin-02-vmax-02}
+\end{figure}
+
+Enabling larger jumps in particle positions on each iteration readily fixed this problem.
+\autoref{fig:pso-vmin-02-vmax-02} shows the results with bounds $[-0.2, 0.2]$.
+
+We can see that the swarm jumps to the biggest spike quite early, and spends most of its time centered around the spike's peak.
+This is the desired behavior.
+Notice again, however, that the actual positions of the particles seemed to prefer the valleys \textit{between} the peaks, rather than the peaks themselves.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{figures/pso-v001-v02.eps}
+    \caption{Results with the velocity bounds $[-0.01, 0.2]$}\label{fig:pso-vmin-001-vmax-02}
+\end{figure}
+
+We can bias the swarm to one direction or the other.
+That is, we can use global information about the shape of the plot to push the swarm left or right.
+\autoref{fig:pso-vmin-001-vmax-02} shows the results of using velocity bounds $[-0.01, 0.2]$, which
+biases the swarm to the right --- which is the opposite of what we'd like.
+We have, in effect, prevented the swarm from moving left at all.
+
+It's difficult to see, but \autoref{fig:pso-vmin-001-vmax-02} also shows that the swarm is located to the right of the warm's best historical position.
+This is expected from the plot of the swarm's mean and it's best location.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{figures/pso-v20-v001.eps}
+    \caption{Results with the velocity bounds $[-0.2, 0.01]$}\label{fig:pso-vmin-02-vmax-001}
+\end{figure}
+
+\autoref{fig:pso-vmin-02-vmax-001} shows the results of the swarm biased in the opposite direction, with velocity bounds $[-0.2, 0.01]$.
+We see an immediate pull to the left on the swarm centroid, and relatively little oscillation\footnote{This in itself is remarkable, and I'm sure would make perfect sense if one were to analyze the swarm's behavior as a system of differential equations. However, this author is suspicious of dynamical systems in general, and the mere thought of pursuing this unfortunate stray thought any farther is enough to cause heart palpitations.} after it corrects itself.
+
+It is interesting that biasing the swarm to the right consistently forced the swarm's mean to be well above the solution, but biasing the swarm to the right forced the swarm's mean \textit{to} the solution, with little-to-no oscillation.
+
+This time, as opposed to previous results, the particles have avoided the valleys in preference of the peaks.
+This is remarkable, and has a perfectly reasonable explanation, but this is left as a simple exercise to the sophisticated reader.
+
+\paragraph{The Acceleration Constants $AC_1$ and $AC_2$}
 
 \end{document}
