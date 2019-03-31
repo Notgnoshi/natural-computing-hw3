@@ -400,13 +400,6 @@ Recall also that simulated annealing worked \textit{much} better.
 \end{figure}
 
 \subsubsection{Particle Swarm}
-\todoinline{
-    \begin{itemize}
-        \item Play with tweakable parameters.
-        \item Mention that simulated annealing beats out this method on this particular function.
-        \item Mention that it might have been better to implement \autoref{alg:particle-swarm} instead of \autoref{alg:particle-swarm-variant}, because this method easily finds the peak of a given spike, but using the variant method pulls to strongly towards the spike, so the swarm never explores other regions of the search space.
-    \end{itemize}
-}
 As mentioned above, we enabled the modification of multiple different tweakable parameters via commandline arguments.
 Below we discuss the impacts of several such parameters.
 
@@ -580,4 +573,8 @@ In other cases, we must use equal left and right velocity biases.
     \caption{Tuned velocity, bigger domain}\label{fig:pso:tuned-vel-bigger-domain}
 \end{figure}
 
+\subsection{Conclusion}
+We found that simulated annealing readily beat both other methods without much tuning.
+It took a considerable amount of thought and effort to tune the particle swarm optimization algorithm before it would consistently converge to the same solution over multiple runs.
+However, once tuned, it performed just as well as simulated annealing.
 \end{document}
