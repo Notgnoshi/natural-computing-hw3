@@ -99,6 +99,110 @@ Note that this density function is normalized by the size of the neighborhood as
 This was important, because we wanted to play with as many tweakable parameters as possible --- the neighborhood size being one of those parameters.
 
 \subsection{Implementation}
+
+\subsubsection{The Grid}
+The Grid is a \(n \times m \times 2\) numpy matrix.
+Colored objects are placed randomly on the 0\textsuperscript{th} layer and indicators for the existance of an Ant in a grid cell are on the 1\textsuperscript{st}.
+The actual algorithm is left to the Ants, so the Grid mostly facilitates information output and mass instructions.
+
+
+\begin{minted}{python}
+def init_grid(self):
+    """Get a randomly initialized grid of objects."""
+    num_objects = sum(self.colors)
+    assert (
+        num_objects <= self.width * self.height
+    ), "Too many colored objects to fit in the grid."
+    # Use 1D arrays because that's all I can generate random indices for.
+    object_grid = np.zeros((self.height * self.width, 2), dtype=int)
+    random_indices = np.random.choice(self.height * self.width, num_objects, replace=False)
+
+    start = 0
+    # 0 represents unoccupied, so start color indexing at 1.
+    for color, num_color in enumerate(self.colors, start=1):
+        object_grid[random_indices[start : start + num_color], 0] = color
+        start += num_color
+
+    self.grid = object_grid.reshape((self.width, self.height, 2))
+\end{minted}
+
+
+Objects held by an Ant are removed from the Grid and are then undetectable by other Ants.
+If this didn't happen, the objects being held by nearby ants would be factored into the \mintinline{python}{perceived_fraction} function.
+In certain cases where the number of Ants is larger than the number of objects in a proportionally small area, the Ants can pick up all the objects and never drop any off.
+The Grid has a workaround for this and less extreme versions of this case where it forces all ants to drop what they have.
+Algorithmically, this is like a reset to the algorithm where the initial grid is in an almost clustered state.
+Biologically, this is like the Ants having short term memory.
+
+
+\subsubsection{The Ants}
+The Ants are implemented as a list of Ant objects (much to the dismay of one of the authors).
+We decided to give the Ants individual control over their location\footnote{An observant reader would notice that we now have two places where the Ants' location is stored---once as a indicator on the Grid and once as the \mintinline{python}{x} and \mintinline{python}{y} values in the Ant class. Software engineers all over the world cringe in unison.} so the nature of the ACA (where the unintelligent individuals create an intelligent algorithm) can be plainly seen.
+
+The \mintinline{python}{update_load} function is the heart of the ACA, and closely mimics the pseudocode.
+
+\begin{minted}{python}
+def update_load(self, kernel, k_x, k_y):
+    """Randomly pick up or drop off an object."""
+    cell_status = kernel[k_x, k_y, 0]
+    cell_occupied = bool(cell_status)
+
+    # Pick up
+    if self.load == EMPTY and cell_occupied:
+        f = self.perceived_fraction(kernel[:, :, 0], cell_status)
+        if np.random.random() <= self.pickup_probability(f):
+            self.pickup(kernel, k_x, k_y)
+    # Drop off
+    elif self.load != EMPTY and not cell_occupied:
+        f = self.perceived_fraction(kernel[:, :, 0], self.load)
+        if np.random.random() <= self.dropoff_probability(f):
+            self.dropoff(kernel, k_x, k_y)
+
+\end{minted}
+
+The Ants can move to any unoccupied cell in their viewing radius.
+When the radius is 1, this operates like normal motion.
+Anything larger than 1 and the Ant can seemingly ``teleport'' to a nearby location\footnote{Fixing the code to only let the Ant move adjacent to itself broke everything, so we gently put it back and walked away.}.
+Since this creates some pretty quick ants, it's best to keep the viewing radius to 3 or lower.
+
+
+\subsubsection{Commandline}
+
+The program comes with several tunable parameters.
+As author recommendations, the number of ants should be lower than the number of objects, and the viewing radius is best kept at 3 or lower.
+
+\begin{minted}{text}
+  $ ./prob1.py --help
+    usage: prob1.py [-h] [--width WIDTH] [--height HEIGHT] [--ants ANTS]
+                    [--iterations ITERATIONS] [--radius RADIUS] [--k1 K1]
+                    [--k2 K2] [--reset-period RESET_PERIOD] [--animate]
+                    [--colors COLORS [COLORS ...]] [--headless]
+
+    Cluster objects with Ants.
+
+    optional arguments:
+      -h, --help            show this help message and exit
+      --width WIDTH, -x WIDTH
+                            The width of the grid to cluster.
+      --height HEIGHT, -y HEIGHT
+                            The height of the grid to cluster.
+      --ants ANTS, -s ANTS  The number of ants to use.
+      --iterations ITERATIONS, -i ITERATIONS
+                            The number of iterations to run.
+      --radius RADIUS       The ant's perceiveable radius.
+      --k1 K1               The k1 tunable parameter
+      --k2 K2               The k2 tunable parameter
+      --reset-period RESET_PERIOD, -p RESET_PERIOD
+                            Force ants to drop off their items every P iterations.
+                            -1 to disable.
+      --animate, -a         Animate the clustering progress.
+      --colors COLORS [COLORS ...]
+                            The number of objects to use for each color.
+      --headless            Run in headless mode for profiling.
+\end{minted}
+
+
+
 \todoinline{
     Comment on interesting portions of the implementation, providing source code.
     \begin{itemize}
