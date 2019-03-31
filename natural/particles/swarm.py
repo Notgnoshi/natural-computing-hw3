@@ -51,15 +51,24 @@ class Swarm:
         b = np.argmax(func(self.particles))
         self.best = self.particles[b]
 
-        for i in range(iters):
+        bests = np.zeros(iters)
+        means = np.zeros(iters)
+
+        bests[0] = self.best
+        means[0] = self.particles.mean()
+
+        for i in range(1, iters):
             print("\rf({:.04f}) = {:.04f}".format(self.best, func(self.best)), end="")
             self.update(func)
 
             if animate and i % 5 == 0:
                 self.plot(func, blocking=False)
 
+            bests[i] = self.best
+            means[i] = self.particles.mean()
+
         print()
-        return self.best
+        return self.best, bests, means
 
     def plot(self, func, blocking=False):
         """Plot the swarm's progress on the given function.

@@ -61,20 +61,50 @@ def func(x):
 def main(args):
     print(args)
 
-    swarm = Swarm(
-        particles=args.particles,
-        AC1=args.ac1,
-        AC2=args.ac2,
-        xmin=args.xmin,
-        xmax=args.xmax,
-        vmin=args.vmin,
-        vmax=args.vmax,
-    )
-    opt = swarm.optimize(func, iters=args.iterations, animate=args.animate and not args.headless)
-    print("optimum:", opt)
 
-    if not args.headless:
-        swarm.plot(func, blocking=True)
+    rows = 3
+    _, axes = plt.subplots(rows, 2, figsize=(8, 8))
+    axes = iter(axes.flatten())
+    for _ in range(rows):
+        swarm = Swarm(
+            particles=args.particles,
+            AC1=args.ac1,
+            AC2=args.ac2,
+            xmin=args.xmin,
+            xmax=args.xmax,
+            vmin=args.vmin,
+            vmax=args.vmax,
+        )
+        # NOTE: Repeated calls to optimize does not reset the swarm.
+        opt, bests, means = swarm.optimize(
+            func, iters=args.iterations, animate=args.animate and not args.headless
+        )
+        print("optimum:", opt)
+
+        # TODO: Animation and results summary don't play well together.
+        if not args.headless and not args.animate:
+            ax = next(axes)
+            ax.plot(bests, label="Swarm Best")
+            ax.plot(means, label="Swarm Mean")
+            ax.set_title("Swarm Behavior Over Time")
+            ax.set_xlabel("iteration")
+            ax.set_ylabel("$x$")
+            ax.set_ylim(args.xmin-0.1, args.xmax+0.1)
+            ax.legend()
+
+            ax = next(axes)
+            x = np.linspace(args.xmin, args.xmax, 500)
+            ax.plot(x, func(x), label="$f(x)$")
+            ax.plot(opt, func(opt), "r.", label=r"$\hat x$")
+            ax.plot(swarm.particles, func(swarm.particles), ".", markersize=3, label="$swarm$")
+            ax.set_title("Particle Swarm Results")
+            ax.set_xlabel("$x$")
+            ax.set_ylabel("$f(x)$")
+            ax.legend()
+
+    if not args.headless and not args.animate:
+        plt.tight_layout()
+        plt.show()
 
 
 if __name__ == "__main__":
