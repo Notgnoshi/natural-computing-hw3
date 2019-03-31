@@ -266,7 +266,34 @@ As mentioned, there are many tweakable parameters for this problem. Here, we wil
         \caption{Clustering with 500 ants}\label{fig:aca:num-ants-200}
     \end{subfigure}
 \end{figure}
-\paragraph{Ant Perceptive Distance}
+
+\paragraph{Ant Perceptive Distance} As mentioned, we implemented the ability to increase each ant's perceptive range by increasing the radius of the neighborhood around them when calculating the perceived fraction $f$ from \autoref{eq:aca:density}.
+What we expected was to see an increase in the cluster size, which did happen occasionally.
+Sometimes, the ants would cluster one color, and then pick up and hold the rest of the objects and never put them down.\footnote{I guess this is actually a success if what you're interested in is an unsupervised classifier --- it has made two classifications. Things that have a cluster and things that don't.}
+
+\begin{figure}[H]
+    \begin{subfigure}[b]{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/aca/aca-w100-h100-o100-c2-a100-r1-k10_1-k20_1.eps}
+        \caption{Clusters with radius 1}\label{fig:aca:radius-1}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/aca/aca-w100-h100-o100-c2-a100-r2-k10_1-k20_1.eps}
+        \caption{Clusters with radius 2}\label{fig:aca:radius-2}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/aca/aca-w100-h100-o100-c2-a100-r3-k10_1-k20_1.eps}
+        \caption{Clusters with radius 3}\label{fig:aca:radius-3}
+    \end{subfigure}
+\end{figure}
+
+Notice that the clusters get more spread out as the perceptive radius increases.
+This is expected, because the ant can drop off items further and further from objects as its perceptive radius increases.
+
+Also notice that as the radius increases, more and more objects are not placed into a cluster. Tuning the dropoff probability via $k_2$, and increasing the number of iterations fixes this.
+
 \paragraph{The Proportionality Constants $k_1$ and $k_2$}
 \paragraph{The Number of Colors}
 \paragraph{The Number of Objects}
