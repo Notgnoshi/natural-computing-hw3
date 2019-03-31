@@ -200,6 +200,9 @@ class ACA:
 
         if blocking:
             plt.ioff()
+            plt.savefig(
+                f"aca-w{self.width}-h{self.height}-o{sum(self.colors)}-c{len(self.colors)}-a{self.num_ants}-r{self.radius}-k1{self.k1}-k2{self.k2}.eps"
+            )
             plt.show()
         else:
             plt.pause(0.00000001)
