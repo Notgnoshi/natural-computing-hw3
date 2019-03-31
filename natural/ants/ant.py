@@ -125,7 +125,7 @@ class Ant:
         :param kernel: A sub matrix of the grid that will be considered.
         :param color: The color of the elements that will be considered.
         """
-        return np.sum(kernel == color) / kernel.size
+        return np.sum(kernel == color) / (kernel.size - 1)
 
     def pickup_probability(self, f):
         """Determine the probability of an ant picking up the object in the given cell.
