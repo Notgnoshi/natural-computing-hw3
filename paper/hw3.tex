@@ -255,12 +255,95 @@ This difference is shown in \autoref{alg:particle-swarm-variant}.
 We implemented \autoref{alg:particle-swarm-variant} to solve the given problem.
 
 \subsection{Implementation}
-\todoinline{
-    \begin{itemize}
-        \item Show the implementation of one iteration.
-        \item Show the output of \mintinline{text}{./prob2.py --help} and mention all of the tweakable parameters we wanted to be able to play with.
-    \end{itemize}
-}
+
+The implementation of a single iteration of \autoref{alg:particle-swarm-variant} is straightforward.
+
+\begin{minted}{python}
+    def update(self, func):
+        """Perform one iteration of optimization."""
+        for i, particle in enumerate(self.particles):
+            if func(x) > func(self.history[i]):
+                self.history[i] = particle
+            if func(x) > func(self.best):
+                self.best = particle
+
+            phi1 = np.random.uniform(low=0, high=self.AC1, size=1)
+            phi2 = np.random.uniform(low=0, high=self.AC2, size=1)
+
+            self.velocities[i] += phi1 * (self.history[i] - particle) + phi2 * (self.best - particle)
+            # Clip the velocities.
+            self.velocities[i] = min(self.vmax, max(self.vmin, self.velocities[i]))
+            self.particles[i] += self.velocities[i]
+            # Clip the positions.
+            self.particles[i] = min(self.xmax, max(self.xmin, self.particles[i]))
+\end{minted}
+
+It \textit{should} be straightforward to parallelize this to update each particle at once, or in batches.
+However, to do so correctly, the swarm's best known position, \mintinline{python}{self.best} should be guarded with a mutex.
+Further, multithreading in Python often yields little-to-no improvement in runtime, because every single object in Python is guarded by the Global Interpreter Lock (GIL).
+Threading is still useful in networking or file operation contexts, threading is eschewed for performing CPU-bound work in favor of multiprocessing.
+The difficulty in using multiple processes for this task is that they have no shared memory, which increases the amount of communication overhead to a point we are unlikely to see a big performance benefit for this particular problem.
+
+Not to mention that extremely small numbers of particles were still effective in optimizing \autoref{eq:pso:objective} due to the size of the feasible region.
+
+Note that this implementation is strictly one-dimensional.
+Additional work must be done to optimize functions of multiple variables.
+To work in more than one dimension,
+\begin{itemize}
+    \item $\varphi_1$ and $\varphi_2$ should have the same dimension as each particle.
+    \item Each particle velocity should be a tuple of velocities --- one for each dimension.
+    \item The particle velocity and position clipping should be done componentwise.
+\end{itemize}
+
+Running the PSO algorithm for multiple iterations is equally straightforward.
+
+\begin{minted}{python}
+    def optimize(self, func, iters, animate=False):
+        """Optimize the given function for `iters` iterations."""
+        b = np.argmax(func(self.particles))
+        self.best = self.particles[b]
+
+        for i in range(iters):
+            self.update(func)
+
+            if animate and i % 5 == 0:
+                self.plot(func, blocking=False)
+
+        return self.best
+\end{minted}
+
+As in the first problem, we implemented our solution in such as way as to allow us to play with a large number of tweakable parameters.
+All of the parameters are adjustable via commandline arguments shown below.
+
+\begin{minted}{text}
+    $ ./prob2.py --help
+    usage: prob2.py [-h] [--xmin XMIN] [--xmax XMAX] [--ac1 AC1] [--ac2 AC2]
+                    [--vmin VMIN] [--vmax VMAX] [--particles PARTICLES]
+                    [--iterations ITERATIONS] [--animate] [--headless]
+
+    Optimize a function with a particle swarm.
+
+    optional arguments:
+    -h, --help              show this help message and exit
+    --xmin XMIN             The lower domain boundary.
+    --xmax XMAX             The upper domain boundary.
+    --ac1 AC1               Acceleration constant for the particle history component.
+    --ac2 AC2               Acceleration constant for the swarm history component.
+    --vmin VMIN             The particle velocity lower bound.
+    --vmax VMAX             The particle velocity upper bound.
+    --particles PARTICLES, -p PARTICLES
+                            The number of particles in the swarm.
+    --iterations ITERATIONS, -i ITERATIONS
+                            The number of iterations to use.
+    --animate               Animate the swarm's progress.
+    --headless              A headless mode for profiling.
+\end{minted}
+
+Note that considerable more work would need to be done, as above, to make this wrapper script handle multivariate objective functions.
+The difficulty lies in specifying the feasible region to optimize over, using commandline arguments.
+
+Setting the objective function to optimize is less easy to do from the commandline,\footnote{In a secure fashion. It's possible to use \mintinline{python}{eval()} or \mintinline{python}{ast.literal_eval()}, but both of these methods make this author queasy.}
+so the \mintinline{python}{func(x)} function in the `prob2.py' script must be edited.
 
 \subsection{Results}
 \todoinline{
