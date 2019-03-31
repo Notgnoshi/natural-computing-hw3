@@ -363,7 +363,7 @@ so the \mintinline{python}{func(x)} function in the `prob2.py' script must be ed
 Recall\footnote{Or let us make the recollection for you.} from Homework 1 that hill climbing struggles with ``spiky'' functions.
 \autoref{fig:pso:hill-climbing-results} shows the results from several independent runs of the hill climbing algorithm on the objective function \autoref{eq:pso:objective}.
 
-\begin{figure}[h]
+\begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{figures/prob1-hill-climbing-results.eps}
     \caption{Results from three successive runs of the hill climbing algorithm.}\label{fig:pso:hill-climbing-results}
@@ -375,7 +375,7 @@ Running the randomly-initialized hill climbing algorithm multiple times in paral
 From this we can immediately see that there is quite a bit in the variance of multiple runs.
 The success of the hill climbing algorithm depends entirely on the its random initialization.
 
-\begin{figure}[h]
+\begin{figure}[H]
     \centering
     \includegraphics{figures/prob1-hill-climbing-solution.eps}
     \caption{Results from multiple runs of the hill climbing algorithm in parallel.}\label{fig:pso:hill-climbing-parallel}
@@ -385,7 +385,7 @@ The success of the hill climbing algorithm depends entirely on the its random in
 Recall also that simulated annealing worked \textit{much} better.
 \autoref{fig:pso:simulated-annealing-results} shows a steady peak-to-peak trend from the simulated annealing algorithm, because it accepts enough random solutions to explore non-local space, but over time cools down enough to settle to a reasonable solution.
 
-\begin{figure}[h]
+\begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{figures/prob1-simulated-annealing-results.eps}
     \caption{Results from three successive runs of the simulated annealing algorithm.}\label{fig:pso:simulated-annealing-results}
@@ -393,7 +393,7 @@ Recall also that simulated annealing worked \textit{much} better.
 
 \autoref{fig:pso:simulated-annealing-parallel} is much more illuminating; not only does the simulated annealing algorithm not find non-global solutions, each iterated run settled down to exactly the same solution.
 
-\begin{figure}[h]
+\begin{figure}[H]
     \centering
     \includegraphics{figures/prob1-simulated-annealing-solutions.eps}
     \caption{Results from multiple runs of the simulated annealing algorithm in parallel.}\label{fig:pso:simulated-annealing-parallel}
