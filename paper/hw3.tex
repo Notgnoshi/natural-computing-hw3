@@ -489,13 +489,95 @@ This is expected from the plot of the swarm's mean and it's best location.
 \end{figure}
 
 \autoref{fig:pso-vmin-02-vmax-001} shows the results of the swarm biased in the opposite direction, with velocity bounds $[-0.2, 0.01]$.
-We see an immediate pull to the left on the swarm centroid, and relatively little oscillation\footnote{This in itself is remarkable, and I'm sure would make perfect sense if one were to analyze the swarm's behavior as a system of differential equations. However, this author is suspicious of dynamical systems in general, and the mere thought of pursuing this unfortunate stray thought any farther is enough to cause heart palpitations.} after it corrects itself.
+We see an immediate pull to the left on the swarm centroid, and relatively little oscillation\footnote{This in itself is remarkable, and I'm sure would make perfect sense if one were to analyze the swarm's behavior as a system of differential equations. However, this author is suspicious of dynamical systems in general, and the mere thought of pursuing this unfortunate stray idea any farther is enough to cause heart palpitations.} after it corrects itself.
 
 It is interesting that biasing the swarm to the right consistently forced the swarm's mean to be well above the solution, but biasing the swarm to the right forced the swarm's mean \textit{to} the solution, with little-to-no oscillation.
 
 This time, as opposed to previous results, the particles have avoided the valleys in preference of the peaks.
 This is remarkable, and has a perfectly reasonable explanation, but this is left as a simple exercise to the sophisticated reader.
 
-\paragraph{The Acceleration Constants $AC_1$ and $AC_2$}
+\paragraph{The Acceleration Constants $AC_1$ and $AC_2$} Playing with both acceleration and velocity was revealing.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{figures/pso-sinusoids.eps}
+    \caption{Them there's some sinusoids}\label{fig:pso:sinusoids}
+\end{figure}
+
+Different configurations of velocity and acceleration resulted in different oscillatory behavior.
+This is completely unsurprising from a dynamical systems standpoints, where some configurations might be underdamped, overdamped, etc.
+
+However, as mentioned, this author is suspicious of dynamical systems and refuses to make a claim other than ``Them there's some sinusoids''.
+We were able to get results, and even some good results from the particle swarm optimization algorithm.
+There's no need to perform anything so mathochistic as a dynamical systems analysis of the swarm behavior.
+
+Note that much of the oscillatory behavior observed in this experimentation can be damped by using a swarm with more particles.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{figures/pso-high-vel-high-accel.eps}
+    \caption{High velocity, high acceleration.}\label{fig:pso:high-vel-high-accel}
+\end{figure}
+
+Using high velocities and high accelerations means that the particles are jumping around much farther distances with every iteration.
+The result is a less cohesive and more sparse swarm.
+Yet a beneficial consequence is that the swarm explores more of the search space, resulting in more consistent results.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{figures/pso-high-vel-low-accel.eps}
+    \caption{High velocity, low acceleration.}\label{fig:pso:high-vel-low-accel}
+\end{figure}
+
+Using high velocities with low acceleration results in a swarm that consistently overshoots are requires correction.
+It is also necessary to run the algorithm for more iterations to settle down to a more reasonable solution.
+We recommend avoiding this configuration.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{figures/pso-low-vel-high-accel.eps}
+    \caption{Low velocity, high acceleration.}\label{fig:pso:low-vel-high-accel}
+\end{figure}
+
+Using low velocity with a high acceleration also has undesirable results.
+This is the default configuration we used in previous analysis --- a default velocity bound of $[-0.1, 0.1]$ with acceleration constants $AC_1 = AC_2 = 2$.
+We recommend avoiding this configuration as well.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{figures/pso-low-vel-low-accel.eps}
+    \caption{Low velocity, low acceleration.}\label{fig:pso:low-vel-low-accel}
+\end{figure}
+
+Using low velocity with low acceleration is more oscillatory than with high velocities and low acceleration.
+This is because using low accelerations results in a more cohesive swarm that moves together in a tighter packed bunch.
+This can be beneficial --- the swarm can move faster throughout the fitness landscape --- yet it also produces more oscillation because the swarm overshoots and has to correct itself.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{figures/pso-tuned-vel-low-accel.eps}
+    \caption{Tuned velocity, low acceleration.}\label{fig:pso:tuned-vel-low-accel}
+\end{figure}
+
+If we use the biased velocity limits to push the swarm to one side, we can see that it struggles to correct itself if the acceleration is lowered.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{figures/pso-tuned-vel-high-accel.eps}
+    \caption{Tuned velocity, high acceleration.}\label{fig:pso:tuned-vel-high-accel}
+\end{figure}
+
+Our ultimate recommendation is to use global knowledge about the behavior of the function to push the swarm to one side or the other, yet to allow a high enough acceleration to correct any overshoots quickly.
+
+This results in a stable swarm that does not move around much once it converges.
+
+However, as \autoref{fig:pso:tuned-vel-bigger-domain} indicates, this only works if the optimum is to one side or the other of the feasible region.
+In other cases, we must use equal left and right velocity biases.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{figures/pso-tuned-vel-bigger-domain.eps}
+    \caption{Tuned velocity, bigger domain}\label{fig:pso:tuned-vel-bigger-domain}
+\end{figure}
 
 \end{document}
