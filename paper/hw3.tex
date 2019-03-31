@@ -238,6 +238,39 @@ As author recommendations, the number of ants should be lower than the number of
     \end{itemize}
 }
 
+\subsubsection{Tweakable Parameters}
+As mentioned, there are many tweakable parameters for this problem. Here, we will explore the most impactful parameters, but will do so on a smaller grid for ease of computation and interpretation.\footnote{As well as making the images small enough to display while big enough to see individual pixels.}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.6\textwidth]{figures/aca/aca-w100-h100-o100-c2-a500-r1-k10_1-k20_1.eps}
+    \caption{Initial random distribution of 100 objects on a $100 \times 100$ grid.}\label{fig:aca:rand-objects}
+\end{figure}
+
+\paragraph{Number of Ants} The most obvious parameter to tweak is the number of ants.
+
+\begin{figure}[H]
+    \begin{subfigure}[b]{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/aca/aca-w100-h100-o100-c2-a50-r1-k10_1-k20_1.eps}
+        \caption{Clustering with 50 ants}\label{fig:aca:num-ants-50}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/aca/aca-w100-h100-o100-c2-a100-r1-k10_1-k20_1.eps}
+        \caption{Clustering with 100 ants}\label{fig:aca:num-ants-100}
+    \end{subfigure}
+    \begin{subfigure}[b]{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/aca/aca-w100-h100-o100-c2-a500-r1-k10_1-k20_1.eps}
+        \caption{Clustering with 500 ants}\label{fig:aca:num-ants-200}
+    \end{subfigure}
+\end{figure}
+\paragraph{Ant Perceptive Distance}
+\paragraph{The Proportionality Constants $k_1$ and $k_2$}
+\paragraph{The Number of Colors}
+\paragraph{The Number of Objects}
+
 \section{Particle Swarm Optimization}
 
 \subsection{Statement}
