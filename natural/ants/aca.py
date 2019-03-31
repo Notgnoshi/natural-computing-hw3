@@ -6,7 +6,7 @@ from matplotlib.colors import ListedColormap
 from .ant import Ant
 
 
-@numba.jit(nopython=True)
+@numba.jit(nopython=True, cache=True)
 def __kernel(matrix, x1, y1, x2, y2):
     """Get the kernel from (x1, y1) to (x2, y2) from the given matrix."""
     # Only get the first two dimensions of the matrix if more exist.
@@ -18,7 +18,7 @@ def __kernel(matrix, x1, y1, x2, y2):
     return matrix[x1 : x2 + 1, y1 : y2 + 1]
 
 
-@numba.jit(nopython=True)
+@numba.jit(nopython=True, cache=True)
 def kernel_center(matrix, x, y, r):
     """Get the kernel centered at (x, y) with radius `r` from the given matrix."""
     x1, x2 = x - r, x + r
@@ -26,7 +26,7 @@ def kernel_center(matrix, x, y, r):
     return __kernel(matrix, x1, y1, x2, y2)
 
 
-@numba.jit(nopython=True)
+@numba.jit(nopython=True, cache=True)
 def kernel_coords(coords, radius):
     """Given a set of matrix coordinates and a kernel radius, get the local kernel coordinates.
 
