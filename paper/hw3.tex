@@ -251,11 +251,11 @@ and compare the results with those of simulated annealing from Homework 1.
     \centering
     \begin{subfigure}[b]{0.49\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{figures/prob1-function.eps}
+        \includegraphics[width=\textwidth]{figures/pso/prob1-function.eps}
     \end{subfigure}
     \begin{subfigure}[b]{0.49\textwidth}
         \centering
-        \includegraphics[width=\textwidth]{figures/prob1-derivative.eps}
+        \includegraphics[width=\textwidth]{figures/pso/prob1-derivative.eps}
     \end{subfigure}
     \caption{The objective function~\ref{eq:pso:objective} and its derivative.}\label{fig:pso:objective}
 \end{figure}
@@ -469,7 +469,7 @@ Recall\footnote{Or let us make the recollection for you.} from Homework 1 that h
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{figures/prob1-hill-climbing-results.eps}
+    \includegraphics[width=\textwidth]{figures/pso/prob1-hill-climbing-results.eps}
     \caption{Results from three successive runs of the hill climbing algorithm.}\label{fig:pso:hill-climbing-results}
 \end{figure}
 
@@ -481,7 +481,7 @@ The success of the hill climbing algorithm depends entirely on the its random in
 
 \begin{figure}[H]
     \centering
-    \includegraphics{figures/prob1-hill-climbing-solution.eps}
+    \includegraphics{figures/pso/prob1-hill-climbing-solution.eps}
     \caption{Results from multiple runs of the hill climbing algorithm in parallel.}\label{fig:pso:hill-climbing-parallel}
 \end{figure}
 
@@ -491,7 +491,7 @@ Recall also that simulated annealing worked \textit{much} better.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{figures/prob1-simulated-annealing-results.eps}
+    \includegraphics[width=\textwidth]{figures/pso/prob1-simulated-annealing-results.eps}
     \caption{Results from three successive runs of the simulated annealing algorithm.}\label{fig:pso:simulated-annealing-results}
 \end{figure}
 
@@ -499,7 +499,7 @@ Recall also that simulated annealing worked \textit{much} better.
 
 \begin{figure}[H]
     \centering
-    \includegraphics{figures/prob1-simulated-annealing-solutions.eps}
+    \includegraphics{figures/pso/prob1-simulated-annealing-solutions.eps}
     \caption{Results from multiple runs of the simulated annealing algorithm in parallel.}\label{fig:pso:simulated-annealing-parallel}
 \end{figure}
 
@@ -518,7 +518,7 @@ All the swarm needs to do to converge to the solution is begin with at least one
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{figures/pso-100-particles.eps}
+    \includegraphics[width=\textwidth]{figures/pso/pso-100-particles.eps}
     \caption{The PSO algorithm with default parameters and 100 particles}\label{fig:pso:100-particles}
 \end{figure}
 
@@ -526,7 +526,7 @@ Figures~\ref{fig:pso:100-particles} and~\ref{fig:pso:5-particles} shows the resu
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{figures/pso-5-particles.eps}
+    \includegraphics[width=\textwidth]{figures/pso/pso-5-particles.eps}
     \caption{The PSO algorithm with default parameters and 5 particles}\label{fig:pso:5-particles}
 \end{figure}
 
@@ -544,7 +544,7 @@ This might be because particles were now free to overshoot their planned traject
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{figures/pso-v01.eps}
+    \includegraphics[width=\textwidth]{figures/pso/pso-v01.eps}
     \caption{Results with the default velocity bounds $[-0.1, 0.1]$}\label{fig:pso-vmin-01-vmax-01}
 \end{figure}
 
@@ -553,7 +553,7 @@ From this, we can see that the swarm mean does not jump from spike to spike near
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{figures/pso-v021.eps}
+    \includegraphics[width=\textwidth]{figures/pso/pso-v021.eps}
     \caption{Results with the velocity bounds $[-0.2, 0.2]$}\label{fig:pso-vmin-02-vmax-02}
 \end{figure}
 
@@ -566,7 +566,7 @@ Notice again, however, that the actual positions of the particles seemed to pref
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{figures/pso-v001-v02.eps}
+    \includegraphics[width=\textwidth]{figures/pso/pso-v001-v02.eps}
     \caption{Results with the velocity bounds $[-0.01, 0.2]$}\label{fig:pso-vmin-001-vmax-02}
 \end{figure}
 
@@ -581,7 +581,7 @@ This is expected from the plot of the swarm's mean and it's best location.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{figures/pso-v20-v001.eps}
+    \includegraphics[width=\textwidth]{figures/pso/pso-v20-v001.eps}
     \caption{Results with the velocity bounds $[-0.2, 0.01]$}\label{fig:pso-vmin-02-vmax-001}
 \end{figure}
 
@@ -597,7 +597,7 @@ This is remarkable, and has a perfectly reasonable explanation, but this is left
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{figures/pso-sinusoids.eps}
+    \includegraphics[width=\textwidth]{figures/pso/pso-sinusoids.eps}
     \caption{Them there's some sinusoids}\label{fig:pso:sinusoids}
 \end{figure}
 
@@ -612,7 +612,7 @@ Note that much of the oscillatory behavior observed in this experimentation can 
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{figures/pso-high-vel-high-accel.eps}
+    \includegraphics[width=\textwidth]{figures/pso/pso-high-vel-high-accel.eps}
     \caption{High velocity, high acceleration.}\label{fig:pso:high-vel-high-accel}
 \end{figure}
 
@@ -622,7 +622,7 @@ Yet a beneficial consequence is that the swarm explores more of the search space
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{figures/pso-high-vel-low-accel.eps}
+    \includegraphics[width=\textwidth]{figures/pso/pso-high-vel-low-accel.eps}
     \caption{High velocity, low acceleration.}\label{fig:pso:high-vel-low-accel}
 \end{figure}
 
@@ -632,7 +632,7 @@ We recommend avoiding this configuration.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{figures/pso-low-vel-high-accel.eps}
+    \includegraphics[width=\textwidth]{figures/pso/pso-low-vel-high-accel.eps}
     \caption{Low velocity, high acceleration.}\label{fig:pso:low-vel-high-accel}
 \end{figure}
 
@@ -642,7 +642,7 @@ We recommend avoiding this configuration as well.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{figures/pso-low-vel-low-accel.eps}
+    \includegraphics[width=\textwidth]{figures/pso/pso-low-vel-low-accel.eps}
     \caption{Low velocity, low acceleration.}\label{fig:pso:low-vel-low-accel}
 \end{figure}
 
@@ -652,7 +652,7 @@ This can be beneficial --- the swarm can move faster throughout the fitness land
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{figures/pso-tuned-vel-low-accel.eps}
+    \includegraphics[width=\textwidth]{figures/pso/pso-tuned-vel-low-accel.eps}
     \caption{Tuned velocity, low acceleration.}\label{fig:pso:tuned-vel-low-accel}
 \end{figure}
 
@@ -660,7 +660,7 @@ If we use the biased velocity limits to push the swarm to one side, we can see t
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{figures/pso-tuned-vel-high-accel.eps}
+    \includegraphics[width=\textwidth]{figures/pso/pso-tuned-vel-high-accel.eps}
     \caption{Tuned velocity, high acceleration.}\label{fig:pso:tuned-vel-high-accel}
 \end{figure}
 
@@ -673,7 +673,7 @@ In other cases, we must use equal left and right velocity biases.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\textwidth]{figures/pso-tuned-vel-bigger-domain.eps}
+    \includegraphics[width=\textwidth]{figures/pso/pso-tuned-vel-bigger-domain.eps}
     \caption{Tuned velocity, bigger domain}\label{fig:pso:tuned-vel-bigger-domain}
 \end{figure}
 
