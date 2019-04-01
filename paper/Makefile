@@ -17,6 +17,7 @@ error:
 clean:
 	latexmk -C
 	rm -rf *.bbl *.tdo
+	find . -name "*.pdf" -delete
 
 view:
 	1>/dev/null 2>/dev/null xdg-open $(PROJECT_NAME).pdf &
