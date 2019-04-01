@@ -336,24 +336,6 @@ because apparently \mintinline{python}{numpy.count_nonzero()} is complicated eno
 After spending about 8 hours wrestling with compilation warning messages second only to those a grouchy \LaTeX{} compiler makes, we were able to cut our runtime in half.
 That's right, we saved a whopping 15 seconds with every run, at the cost of 8 hours of development work and $\sim 5$ seconds of compilation with every run because \mintinline{python}{@numba.jitclass} can't cache its results like \mintinline{python}{@numba.njit} can.\footnote{There were also brain cells lost as well, but not due to the painful experience of compiling a language not meant for compilation. Those brain cells were lost due to a more\dots liquid factor.}
 
-\todoinline{
-    Comment on interesting portions of the implementation, providing source code.
-    \begin{itemize}
-        \item Show how the grid and ants are initialized, and mention that our decision to allow multiple colors complicated things.
-        \item The fact we used Numba to JIT-compile our code to get an over $2\times$ speedup.
-        \item Show the output of \mintinline{text}{./prob1 --help} and emphasize that we wanted to play with the tweakable parameters, in addition to the problem size, number of colors, etc.
-        \item Mention the datastructures we ended up using and why (two layers of the grid, and a list of \mintinline{python}{Ant} objects.)
-        \item Make note that the \mintinline{python}{update_position()} method still randomly teleports an ant to an unoccupied cell in its neighborhood (even if the radius is greater than 1) and why.
-
-              We struggled getting one step updates to work, and I still don't understand why.
-              Shrinking the kernel before the position update broke everything\dots
-
-              Also mention that storing the ants in a list, and the objects in the grid caused problems.
-              It would have been better to use a sparse representation where we could perform efficient lookup at a given position, but also easily iterate over the ants.
-        \item Make note that when an ant picks up an object, it removes it from the grid, so it no longer impacts the perceived fraction density calculation from \autoref{eq:aca:density}.
-    \end{itemize}
-}
-
 \subsection{Results}
 \todoinline{
     Examine the impact of different tunable parameters.
