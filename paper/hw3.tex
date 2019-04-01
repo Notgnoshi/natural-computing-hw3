@@ -591,6 +591,17 @@ Using $k_2 = 0.02$ resulted in very few unclustered items at the end of 8000 ite
 
 After having set $k_2 = 0.02$ satisfactorily, we then played around with different values for $k_1$.
 \autoref{fig:aca:prob-radii-k1} shows that pushing $k_1$ to either side of the default $0.1$ value had far less impact than tuning $k_2$.
+
+Our final recommendation is to use large radii with small values for $k_2$.
+This has the best results --- with fewer objects not placed into clusters, and with larger clusters.
+\autoref{fig:aca:results} displays the results of the ACA algorithm with a neighborhood radius of 6 cells in every direction, and a very small $k_2$ value of $0.01$.
+Setting $k_2$ this low drastically increases the probability of item dropoff, which is not what we had expected to produce the ebst results.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{figures/aca/aca-w200-h200-o200-c2-a500-r6-k10_1-k20_01.eps}
+    \caption{Clustering with $r=6$ and $k_2=0.01$}\label{fig:aca:results}
+\end{figure}
 \clearpage
 \section{Particle Swarm Optimization}
 
