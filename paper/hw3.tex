@@ -352,8 +352,6 @@ That's right, we saved a whopping 15 seconds with every run, at the cost of 8 ho
         \item The number of ants (less than or greater than the total number of objects impacted cluster quality).
     \end{itemize}
 }
-
-\subsubsection{Tweakable Parameters}
 As mentioned, there are many tweakable parameters for this problem. Here, we will explore the most impactful parameters, but will do so on a smaller grid for ease of computation and interpretation.\footnote{As well as making the images small enough to display while big enough to see individual pixels.}
 
 \begin{figure}[H]
@@ -362,7 +360,7 @@ As mentioned, there are many tweakable parameters for this problem. Here, we wil
     \caption{Initial random distribution of 100 objects on a $100 \times 100$ grid.}\label{fig:aca:rand-objects}
 \end{figure}
 
-\paragraph{Number of Ants} The most obvious parameter to tweak is the number of ants.
+\subsubsection{Number of Ants} The most obvious parameter to tweak is the number of ants.
 
 \begin{figure}[H]
     \begin{subfigure}[b]{0.32\textwidth}
@@ -383,7 +381,7 @@ As mentioned, there are many tweakable parameters for this problem. Here, we wil
     \caption{The impact of the number of ants}\label{fig:aca:num-ants}
 \end{figure}
 
-\paragraph{Ant Perceptive Distance} As mentioned, we implemented the ability to increase each ant's perceptive range by increasing the radius of the neighborhood around them when calculating the perceived fraction $f$ from \autoref{eq:aca:density}.
+\subsubsection{Ant Perceptive Distance} As mentioned, we implemented the ability to increase each ant's perceptive range by increasing the radius of the neighborhood around them when calculating the perceived fraction $f$ from \autoref{eq:aca:density}.
 What we expected was to see an increase in the cluster size, which did happen occasionally.
 Sometimes, the ants would cluster one color, and then pick up and hold the rest of the objects and never put them down.\footnote{I guess this is actually a success if what you're interested in is an unsupervised classifier --- it has made two classifications. Things that have a cluster and things that don't.}
 
@@ -411,7 +409,7 @@ This is expected, because the ant can drop off items further and further from ob
 
 Also notice that as the radius increases, more and more objects are not placed into a cluster. Tuning the dropoff probability via $k_2$, and increasing the number of iterations fixes this.
 
-\paragraph{The Proportionality Constants $k_1$ and $k_2$}
+\subsubsection{The Proportionality Constants $k_1$ and $k_2$}
 
 \begin{figure}[H]
     \begin{subfigure}[t]{0.32\textwidth}
@@ -447,8 +445,10 @@ Also notice that as the radius increases, more and more objects are not placed i
     \end{subfigure}
     \caption{The impact of $k_1$ and $k_2$ on the pickup and dropoff probabilities}\label{fig:aca:k1-k2}
 \end{figure}
-\paragraph{The Number of Colors}
-\paragraph{The Number of Objects}
+\subsubsection{The Number of Colors}
+\subsubsection{The Number of Objects}
+
+\subsection{Conclusion}
 
 \clearpage
 \section{Particle Swarm Optimization}
