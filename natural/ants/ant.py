@@ -71,13 +71,13 @@ class Ant:
         :param k_x: The local x coordinate of the Ant in the kernel
         :param k_y: The local y coordinate of the Ant in the kernel
         """
-        cell_status = kernel[k_x, k_y, 0]
-        cell_occupied = bool(cell_status)
+        color = kernel[k_x, k_y, 0]
+        cell_occupied = bool(color)
 
         # Pick up
         if self.load == EMPTY and cell_occupied:
             # Calculate p based on value in grid cell
-            f = self.perceived_fraction(kernel[:, :, 0], cell_status)
+            f = self.perceived_fraction(kernel[:, :, 0], color)
             # Dermine if ant should pick up value
             if np.random.random() <= self.pickup_probability(f):
                 # NOTE: Removing the item from the grid makes it impossible to use the item in the
