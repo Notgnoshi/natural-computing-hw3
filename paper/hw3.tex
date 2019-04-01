@@ -210,6 +210,132 @@ The tunable parameters come in two flavors --- the problem size and configuratio
 
 The size of the grid, number of colors, number of objects of each color, and the number of ants are configurable, as well as the ant's perceptive radius, proportionally constants, and whether to force ants to drop their loads periodically are configurable as well.
 
+\subsubsection{Just-In-Time Compilation}
+One of the things we wanted to do from the get-go was to use the \mintinline{python}{numba} library to Just-In-Time (JIT) compile our code.
+The Numba literature seemed to indicate that a simple one line addition to each performance critical function would magically make things faster.
+This is partially true.
+
+Numba has several limitations, the must infuriating of which is that it cannot JIT compile a class instance method.
+This makes sense if you consider the Python type system and function decorators.
+It is not possible for a decorator to know at compile-time the type of the \mintinline{python}{self} parameter implicitly passed to each instance method.
+
+More surprising however, is that the Numba \mintinline{python}{@njit} decorator will not compile static class methods decorated with \mintinline{python}{@staticmethod}.
+This means that any function you wish to JIT compile must be a free function with fairly rigid types on each of its parameters.
+
+For example, we JIT compiled the following methods
+\begin{minted}{python}
+    @staticmethod
+    def __kernel(matrix, x1, y1, x2, y2):
+        """Get the kernel from (x1, y1) to (x2, y2) from the given matrix."""
+        # Only get the first two dimensions of the matrix if more exist.
+        width, height = matrix.shape[:2]
+        x1 = max(0, min(x1, width))
+        x2 = max(0, min(x2, width))
+        y1 = max(0, min(y1, height))
+        y2 = max(0, min(y2, height))
+        return matrix[x1 : x2 + 1, y1 : y2 + 1]
+
+    @classmethod
+    def kernel_center(cls, matrix, x, y, r):
+        """Get the kernel centered at (x, y) with radius `r` from the given matrix."""
+        x1, x2 = x - r, x + r
+        y1, y2 = y - r, y + r
+        return cls.__kernel(matrix, x1, y1, x2, y2)
+
+    @staticmethod
+    def kernel_coords(coords, radius):
+        """Given a set of matrix coordinates and a kernel radius, get the local kernel coordinates."""
+        x, y = coords
+        return min(radius, x), min(radius, y)
+\end{minted}
+
+like so:
+
+\begin{minted}{python}
+    @numba.jit(nopython=True, cache=True)
+    def __kernel(matrix, x1, y1, x2, y2):
+        """Get the kernel from (x1, y1) to (x2, y2) from the given matrix."""
+        # Only get the first two dimensions of the matrix if more exist.
+        width, height = matrix.shape[:2]
+        x1 = max(0, min(x1, width))
+        x2 = max(0, min(x2, width))
+        y1 = max(0, min(y1, height))
+        y2 = max(0, min(y2, height))
+        return matrix[x1 : x2 + 1, y1 : y2 + 1]
+
+    @numba.jit(nopython=True, cache=True)
+    def kernel_center(matrix, x, y, r):
+        """Get the kernel centered at (x, y) with radius `r` from the given matrix."""
+        x1, x2 = x - r, x + r
+        y1, y2 = y - r, y + r
+        return __kernel(matrix, x1, y1, x2, y2)
+
+    @numba.jit(nopython=True, cache=True)
+    def kernel_coords(coords, radius):
+        """Given a set of matrix coordinates and a kernel radius, get the local kernel coordinates."""
+        x, y = coords
+        return min(radius, x), min(radius, y)
+\end{minted}
+
+We can see that the implementation of the functions did not differ, only the scope in which they are defined, and the lack of \mintinline{python}{@decorator}s applied at their definitions.
+
+However, as neat as this is, it had little-to-no impact on the program runtime.
+Profiling revealed that it was the methods in the \mintinline{python}{Ant} class that were the biggest contributors to the runtime.
+
+Unfortunately, JIT compiling an entire class, while possible with the \mintinline{python}{@numba.jitclass} decorator, is more troublesome.
+As mentioned, it is not possible to compile an instance method, bit it \textit{is} possible to compile the whole class, including the instance methods.
+Unfortunately, doing so requires \textit{every} instance method to be compiled, and not just the ones that meaningfully impact the runtime.
+
+For simple classes, performing this JIT compilation is quite easy --- you provide a map of instance attributes and their types to the compiler, and it magically does everything else for you.
+Unfortunately\footnote{I think ``unfortunately'' might be becoming my favorite word. There's just something poetic about getting one's hopes up only to dash them to the ground repeatedly.} this breaks as soon as one of the attributes is a non-basic type --- say an instance of another class, or something Python specific.
+
+In our case, the \mintinline{python}{Ant} class contains only basic types and methods that operate on them, so the only change we had to make was to add the type specification shown below.
+
+\begin{minted}{python}
+    spec = [
+        ("x", numba.int32),
+        ("y", numba.int32),
+        ("k1", numba.float32),
+        ("k2", numba.float32),
+        ("load", numba.int32),
+    ]
+
+    @numba.jitclass(spec)
+    class Ant:
+        """An ant entity that moves around and picks up and puts down objects."""
+
+        def __init__(self, x, y, k1, k2):
+            """Initialize an Ant with its location and tunable parameters.
+
+            :param x: The x coordinate of the Ant in the grid.
+            :param y: The y coordinate of the Ant in the grid.
+            :param k1: The pickup probability tunable parameter.
+            :param k2: The dropoff probability tunable parameter.
+            """
+            self.x = x
+            self.y = y
+            self.k1 = k1
+            self.k2 = k2
+            self.load = EMPTY
+\end{minted}
+
+That and we had to change the \mintinline{python}{perceived_fraction()} function from
+\begin{minted}{python}
+    def perceived_fraction(self, kernel, color):
+        """Determine the perceived fraction of objects of a given color around the given kernel."""
+        return np.count_nonzero(kernel == color) / kernel.size
+\end{minted}
+to
+\begin{minted}{python}
+    def perceived_fraction(self, kernel, color):
+        """Determine the perceived fraction of objects of a given color around the given kernel."""
+        return np.sum(kernel == color) / kernel.size
+\end{minted}
+because apparently \mintinline{python}{numpy.count_nonzero()} is complicated enough to warrant Numba not supporting it despite the wild claims to the contrary their documentation makes.
+
+After spending about 8 hours wrestling with compilation warning messages second only to those a grouchy \LaTeX{} compiler makes, we were able to cut our runtime in half.
+That's right, we saved a whopping 15 seconds with every run, at the cost of 8 hours of development work and $\sim 5$ seconds of compilation with every run because \mintinline{python}{@numba.jitclass} can't cache its results like \mintinline{python}{@numba.njit} can.\footnote{There were also brain cells lost as well, but not due to the painful experience of compiling a language not meant for compilation. Those brain cells were lost due to a more\dots liquid factor.}
+
 \todoinline{
     Comment on interesting portions of the implementation, providing source code.
     \begin{itemize}
