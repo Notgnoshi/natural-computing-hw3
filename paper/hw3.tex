@@ -337,21 +337,6 @@ After spending about 8 hours wrestling with compilation warning messages second 
 That's right, we saved a whopping 15 seconds with every run, at the cost of 8 hours of development work and $\sim 5$ seconds of compilation with every run because \mintinline{python}{@numba.jitclass} can't cache its results like \mintinline{python}{@numba.njit} can.\footnote{There were also brain cells lost as well, but not due to the painful experience of compiling a language not meant for compilation. Those brain cells were lost due to a more\dots liquid factor.}
 
 \subsection{Results}
-\todoinline{
-    Examine the impact of different tunable parameters.
-    In no particular order --- as I think of them
-    \begin{itemize}
-        \item Neighborhood radius
-        \item Periodic forced dropoff (and why --- one cluster sometimes formed, and every blue object got picked up, and would thus never get dropped off).
-        \item The parameters $k_1$ and $k_2$, and how they, along with the neighborhood size, and the total number of iterations impacts the quality of the clusters.
-
-              The Jupyter notebook \mintinline{text}{probabilities.ipynb} examines how $k_1$ and $k_2$ impact the pickup and dropoff probabilities, along with the neighborhood size.
-        \item The number of colors
-        \item The number of objects
-        \item The size of the grid
-        \item The number of ants (less than or greater than the total number of objects impacted cluster quality).
-    \end{itemize}
-}
 As mentioned, there are many tweakable parameters for this problem. Here, we will explore the most impactful parameters, but will do so on a smaller grid for ease of computation and interpretation.\footnote{As well as making the images small enough to display while big enough to see individual pixels.}
 
 \begin{figure}[H]
@@ -360,7 +345,8 @@ As mentioned, there are many tweakable parameters for this problem. Here, we wil
     \caption{Initial random distribution of 100 objects on a $100 \times 100$ grid.}\label{fig:aca:rand-objects}
 \end{figure}
 
-\subsubsection{Number of Ants} The most obvious parameter to tweak is the number of ants.
+\subsubsection{Number of Ants}
+The most obvious parameter to tweak is the number of ants.
 
 \begin{figure}[H]
     \begin{subfigure}[b]{0.32\textwidth}
@@ -381,7 +367,8 @@ As mentioned, there are many tweakable parameters for this problem. Here, we wil
     \caption{The impact of the number of ants}\label{fig:aca:num-ants}
 \end{figure}
 
-\subsubsection{Ant Perceptive Distance} As mentioned, we implemented the ability to increase each ant's perceptive range by increasing the radius of the neighborhood around them when calculating the perceived fraction $f$ from \autoref{eq:aca:density}.
+\subsubsection{Ant Perceptive Distance}
+As mentioned, we implemented the ability to increase each ant's perceptive range by increasing the radius of the neighborhood around them when calculating the perceived fraction $f$ from \autoref{eq:aca:density}.
 What we expected was to see an increase in the cluster size, which did happen occasionally.
 Sometimes, the ants would cluster one color, and then pick up and hold the rest of the objects and never put them down.\footnote{I guess this is actually a success if what you're interested in is an unsupervised classifier --- it has made two classifications. Things that have a cluster and things that don't.}
 
@@ -410,7 +397,6 @@ This is expected, because the ant can drop off items further and further from ob
 Also notice that as the radius increases, more and more objects are not placed into a cluster. Tuning the dropoff probability via $k_2$, and increasing the number of iterations fixes this.
 
 \subsubsection{The Proportionality Constants $k_1$ and $k_2$}
-
 \begin{figure}[H]
     \begin{subfigure}[t]{0.32\textwidth}
         \centering
@@ -459,6 +445,7 @@ This makes sense, because as the number of surrounding cells increase, there are
 
 While the probability plots for $k_2$ make sense after some though, it doesn't quite make sense to us why the dropoff probability function is piecewise.
 It is a simple matter to get an upside-down version of the $k_1$ curves.
+
 \subsubsection{The Number of Colors}
 \subsubsection{The Number of Objects}
 
