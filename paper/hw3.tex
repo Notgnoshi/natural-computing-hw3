@@ -445,6 +445,20 @@ Also notice that as the radius increases, more and more objects are not placed i
     \end{subfigure}
     \caption{The impact of $k_1$ and $k_2$ on the pickup and dropoff probabilities}\label{fig:aca:k1-k2}
 \end{figure}
+
+From \autoref{fig:aca:k1-k2} we can see that
+\begin{enumerate}
+    \item Increasing $k_1$ makes it more likely to pick up an object.
+    \item Decreasing $k_2$ makes it more likely to drop off an object.
+\end{enumerate}
+
+In discussion with other classmates, I was led to believe that the probability functions would have to be tweaked to get similar curves once the neighborhood radius is increased.
+This is in fact not true.
+Due to the manner in which we normalized \autoref{eq:aca:density} by the neighborhood size, the only impact increasing the neighborhood size has is making the curves smoother.
+This makes sense, because as the number of surrounding cells increase, there are more and more datapoints to interpolate between, but the magnitudes involved remain bounded.
+
+While the probability plots for $k_2$ make sense after some though, it doesn't quite make sense to us why the dropoff probability function is piecewise.
+It is a simple matter to get an upside-down version of the $k_1$ curves.
 \subsubsection{The Number of Colors}
 \subsubsection{The Number of Objects}
 
