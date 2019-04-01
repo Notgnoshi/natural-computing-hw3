@@ -477,7 +477,7 @@ One of the things we implemented was the ability to have an arbitrary number of 
     \caption{Results with different numbers of colors}\label{fig:aca:colors}
 \end{figure}
 
-We can see that the performance of the PSO algorithm apparently doesn't care about the number of type of objects being clustered.
+We can see that the performance of the ACA algorithm apparently doesn't care about the number of type of objects being clustered.
 This is apparent from the pseudocode given in \autoref{alg:ant-clustering} --- which makes no mention whatsoever about the discrete types of objects being clustered.
 In fact, the algorithm is intended to work on data without distinct classifications --- the point is to learn the classifications from an unlabeled dataset.
 It may be that there are no categorical variables in the dataset.
@@ -494,6 +494,40 @@ It involves some tuning, and if our experience is any indication, a fair amount 
     \caption{Clusters of 7 colors}\label{fig:aca:colors-7}
 \end{figure}
 \subsubsection{The Number of Objects}
+We can also play with the number of objects, holding all other parameters constant, to get a feel for how the ACA algorithm behaves.
+
+\begin{figure}[H]
+    \begin{subfigure}[t]{0.4\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/aca/aca-w100-h100-o50-c2-a300-r2-k10_1-k20_1.eps}
+        \caption{Clusters with 25 of each color}\label{fig:aca:numbers-25}
+    \end{subfigure}%
+    \begin{subfigure}[t]{0.4\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/aca/aca-w100-h100-o100-c2-a300-r2-k10_1-k20_1.eps}
+        \caption{Clusters with 50 of each color}\label{fig:aca:numbers-50}
+    \end{subfigure}%
+
+    \begin{subfigure}[b]{0.4\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/aca/aca-w100-h100-o200-c2-a300-r2-k10_1-k20_1.eps}
+        \caption{Clusters with 100 of each color}\label{fig:aca:numbers-100}
+    \end{subfigure}%
+    \begin{subfigure}[b]{0.4\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/aca/aca-w100-h100-o400-c2-a300-r2-k10_1-k20_1.eps}
+        \caption{Clusters with 200 of each color}\label{fig:aca:numbers-200}
+    \end{subfigure}
+    \caption{Clustering results with 300 ants and a radius of 2}\label{figL:aca:numbers}
+\end{figure}
+
+\autoref{figL:aca:numbers} shows the results of the ACA algorithm using 300 ants, each with a perceived radius of 2.
+From this we can learn several things.
+
+First, the number of ants is important to consider.
+If there are too many ants, they might pick up all the objects before any clusters can form.
+
+Second, as the number of objects increases, there are more objects laying around,\footnote{Here's your tautology for the day.} so it is more likely for an ant to encounter items the same type as the one it is carrying, so the clusters get better and better.
 
 \subsection{Conclusion}
 
