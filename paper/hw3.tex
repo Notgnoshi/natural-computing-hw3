@@ -446,6 +446,7 @@ This makes sense, because as the number of surrounding cells increase, there are
 While the probability plots for $k_2$ make sense after some though, it doesn't quite make sense to us why the dropoff probability function is piecewise.
 It is a simple matter to get an upside-down version of the $k_1$ curves.
 
+\clearpage
 \subsubsection{The Number of Colors}
 One of the things we implemented was the ability to have an arbitrary number of colors.\footnote{As long as that number of colors is less than 8 due to the difficulty of customizing \mintinline{python}{matplotlib} colormaps. The color maps were meant for describing the color scale of a continuous range of values, with the given colors being the points to interpolate between.
 
@@ -522,7 +523,7 @@ We can also play with the number of objects, holding all other parameters consta
     \caption{Clustering results with 300 ants and a radius of 2}\label{fig:aca:numbers}
 \end{figure}
 
-\autoref{figL:aca:numbers} shows the results of the ACA algorithm using 300 ants, each with a perceived radius of 2.
+\autoref{fig:aca:numbers} shows the results of the ACA algorithm using 300 ants, each with a perceived radius of 2.
 From this we can learn several things.
 
 First, the number of ants is important to consider.
