@@ -497,6 +497,7 @@ It involves some tuning, and if our experience is any indication, a fair amount 
 We can also play with the number of objects, holding all other parameters constant, to get a feel for how the ACA algorithm behaves.
 
 \begin{figure}[H]
+    \centering
     \begin{subfigure}[t]{0.4\textwidth}
         \centering
         \includegraphics[width=\textwidth]{figures/aca/aca-w100-h100-o50-c2-a300-r2-k10_1-k20_1.eps}
@@ -518,7 +519,7 @@ We can also play with the number of objects, holding all other parameters consta
         \includegraphics[width=\textwidth]{figures/aca/aca-w100-h100-o400-c2-a300-r2-k10_1-k20_1.eps}
         \caption{Clusters with 200 of each color}\label{fig:aca:numbers-200}
     \end{subfigure}
-    \caption{Clustering results with 300 ants and a radius of 2}\label{figL:aca:numbers}
+    \caption{Clustering results with 300 ants and a radius of 2}\label{fig:aca:numbers}
 \end{figure}
 
 \autoref{figL:aca:numbers} shows the results of the ACA algorithm using 300 ants, each with a perceived radius of 2.
@@ -530,6 +531,37 @@ If there are too many ants, they might pick up all the objects before any cluste
 Second, as the number of objects increases, there are more objects laying around,\footnote{Here's your tautology for the day.} so it is more likely for an ant to encounter items the same type as the one it is carrying, so the clusters get better and better.
 
 \subsection{Conclusion}
+Returning to the prescribed problem size, here are our recommendations for the tunable parameters.
+
+\begin{figure}
+    \centering
+    \begin{subfigure}[t]{0.4\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/aca/aca-w200-h200-o200-c2-a500-r2-k10_1-k20_02.eps}
+        \caption{Clusters with $r=2$ and $k_2 = 0.02$}\label{fig:aca:prob-r2-k2-02}
+    \end{subfigure}%
+    \begin{subfigure}[t]{0.4\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/aca/aca-w200-h200-o200-c2-a500-r2-k10_1-k20_05.eps}
+        \caption{Clusters with $r=2$ and $k_2 = 0.05$}\label{fig:aca:prob-r2-k2-05}
+    \end{subfigure}%
+
+    \begin{subfigure}[b]{0.4\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/aca/aca-w200-h200-o200-c2-a500-r3-k10_1-k20_02.eps}
+        \caption{Clusters with $r=3$ and $k_2 = 0.02$}\label{fig:aca:prob-r3-k2-02}
+    \end{subfigure}%
+    \begin{subfigure}[b]{0.4\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{figures/aca/aca-w200-h200-o200-c2-a500-r3-k10_1-k20_05.eps}
+        \caption{Clusters with $r=3$ and $k_2 = 0.05$}\label{fig:aca:prob-r3-k2-05}
+    \end{subfigure}%
+    \caption{Clustering results with different radii and $k_2$ values}\label{fig:aca:prob-radii-k2}
+\end{figure}
+
+We recommend using larger ranges for the ant perception.
+As \autoref{fig:aca:prob-radii-k2} shows, we had decent results when we increased the ant neighborhood radius to 2 or 3, and used small values for $k_2$.
+Using $k_2 = 0.02$ resulted in very few unclustered items at the end of 8000 iterations.
 
 \clearpage
 \section{Particle Swarm Optimization}
