@@ -266,6 +266,7 @@ As mentioned, there are many tweakable parameters for this problem. Here, we wil
         \includegraphics[width=\textwidth]{figures/aca/aca-w100-h100-o100-c2-a500-r1-k10_1-k20_1.eps}
         \caption{Clustering with 500 ants}\label{fig:aca:num-ants-200}
     \end{subfigure}
+    \caption{The impact of the number of ants}\label{fig:aca:num-ants}
 \end{figure}
 
 \paragraph{Ant Perceptive Distance} As mentioned, we implemented the ability to increase each ant's perceptive range by increasing the radius of the neighborhood around them when calculating the perceived fraction $f$ from \autoref{eq:aca:density}.
@@ -288,6 +289,7 @@ Sometimes, the ants would cluster one color, and then pick up and hold the rest 
         \includegraphics[width=\textwidth]{figures/aca/aca-w100-h100-o100-c2-a100-r3-k10_1-k20_1.eps}
         \caption{Clusters with radius 3}\label{fig:aca:radius-3}
     \end{subfigure}
+    \caption{The impact of different radii}\label{fig:aca:radius}
 \end{figure}
 
 Notice that the clusters get more spread out as the perceptive radius increases.
@@ -328,7 +330,8 @@ Also notice that as the radius increases, more and more objects are not placed i
         \centering
         \includegraphics[width=\textwidth]{figures/aca/k2-r3.eps}
         \caption{$k_2$ vs neighbors with $r=3$}
-    \end{subfigure}%
+    \end{subfigure}
+    \caption{The impact of $k_1$ and $k_2$ on the pickup and dropoff probabilities}\label{fig:aca:k1-k2}
 \end{figure}
 \paragraph{The Number of Colors}
 \paragraph{The Number of Objects}
